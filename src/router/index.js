@@ -160,6 +160,30 @@ export const constantRoutes = [
     ]
   },
 
+  {
+    path: '/salteFish',
+    hidden: true,
+    component: Layout,
+    redirect: '/salteFish/fish',
+    name: 'salteFish',
+    meta: { title: 'salteFish', icon: 'el-icon-s-help' },
+    children: [
+      {
+        path: 'fish',
+        // ES2020语法 类似于require，动态导入组件
+        component: () => import('@/views/task/index'),
+        name: 'fish',
+        meta: { title: 'fish', icon: 'dashboard' }
+      },
+      {
+        path: 'salted',
+        // ES2020语法 类似于require，动态导入组件
+        component: () => import('@/views/task/index'),
+        name: 'salted',
+        meta: { title: 'salted', icon: 'dashboard' }
+      }
+    ]
+  },
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
