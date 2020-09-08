@@ -1,6 +1,8 @@
 <template>
   <div class="app-container">
+    <el-button @click="handlerClick">click</el-button>
     <el-table
+      v-if="isShow"
       v-loading="listLoading"
       :data="list"
       element-loading-text="Loading"
@@ -40,6 +42,7 @@
         </template>
       </el-table-column>
     </el-table>
+    <router-view />
   </div>
 </template>
 
@@ -59,6 +62,7 @@ export default {
   },
   data() {
     return {
+      isShow: true,
       list: null,
       listLoading: true
     }
@@ -73,6 +77,10 @@ export default {
         this.list = response.data.items
         this.listLoading = false
       })
+    },
+    handlerClick() {
+      this.isShow = false
+      this.$router.push({ path: '/example/tree' })
     }
   }
 }

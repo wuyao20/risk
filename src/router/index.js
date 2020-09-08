@@ -51,8 +51,40 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
+      meta: { title: '主页', icon: 'dashboard' }
     }]
+  },
+
+  {
+    path: '/department',
+    component: Layout,
+    redirect: '/department/index',
+    name: 'department',
+    meta: { title: '部门', icon: 'dashboard' },
+    children: [
+      {
+        path: 'index',
+        name: 'index',
+        component: () => import('@/views/department/index'),
+        meta: { title: '部门主页', icon: 'dashboard' }
+      },
+      {
+        hidden: true,
+        path: 'fish',
+        // ES2020语法 类似于require，动态导入组件
+        component: () => import('@/views/department/task/index'),
+        name: 'fish',
+        meta: { title: 'fish', icon: 'dashboard' }
+      },
+      {
+        hidden: true,
+        path: 'salted',
+        // ES2020语法 类似于require，动态导入组件
+        component: () => import('@/views/department/task/index'),
+        name: 'salted',
+        meta: { title: 'salted', icon: 'dashboard' }
+      }
+    ]
   },
 
   {
@@ -69,6 +101,7 @@ export const constantRoutes = [
         meta: { title: 'Table', icon: 'table' }
       },
       {
+        hidden: true,
         path: 'tree',
         name: 'Tree',
         component: () => import('@/views/tree/index'),
@@ -160,30 +193,6 @@ export const constantRoutes = [
     ]
   },
 
-  {
-    path: '/salteFish',
-    hidden: true,
-    component: Layout,
-    redirect: '/salteFish/fish',
-    name: 'salteFish',
-    meta: { title: 'salteFish', icon: 'el-icon-s-help' },
-    children: [
-      {
-        path: 'fish',
-        // ES2020语法 类似于require，动态导入组件
-        component: () => import('@/views/task/index'),
-        name: 'fish',
-        meta: { title: 'fish', icon: 'dashboard' }
-      },
-      {
-        path: 'salted',
-        // ES2020语法 类似于require，动态导入组件
-        component: () => import('@/views/task/index'),
-        name: 'salted',
-        meta: { title: 'salted', icon: 'dashboard' }
-      }
-    ]
-  },
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

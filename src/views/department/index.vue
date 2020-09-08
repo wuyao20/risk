@@ -147,7 +147,7 @@ export default {
   },
   methods: {
     tableRowClassName({ row, rowIndex }) {
-      if (rowIndex <= 2) {
+      if (rowIndex <= 1) {
         return 'success-row'
       }
       return ''

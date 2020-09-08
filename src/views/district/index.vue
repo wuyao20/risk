@@ -9,6 +9,7 @@
       :data="list"
       border
       fit
+      stripe
       highlight-current-row
       style="width: 100%;"
       class="table"
@@ -147,14 +148,14 @@ export default {
   },
   methods: {
     tableRowClassName({ row, rowIndex }) {
-      if (rowIndex <= 2) {
+      if (rowIndex <= 1) {
         return 'success-row'
       }
       return ''
     },
     handleUpdate() {
       this.$router.push({
-        path: '/department/fish'
+        path: '/salteFish/fish'
       })
     }
   }
