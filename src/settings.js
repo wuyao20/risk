@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: 'Vue Admin Template',
+  title: '徐州纪检风险点管理系统',
 
   /**
    * @type {boolean} true | false

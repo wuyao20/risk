@@ -70,11 +70,43 @@ export const constantRoutes = [
       },
       {
         hidden: true,
+        path: 'statistics',
+        // ES2020语法 类似于require，动态导入组件
+        component: () => import('@/views/department/task/index'),
+        name: 'Statistics',
+        meta: { title: '考核统计表' }
+      },
+      {
+        hidden: true,
+        path: 'monthReport',
+        // ES2020语法 类似于require，动态导入组件
+        component: () => import('@/views/department/monthReport/index'),
+        name: 'monthReport',
+        meta: { title: '工作进展月报表' }
+      }
+    ]
+  },
+
+  {
+    path: '/district',
+    component: Layout,
+    redirect: '/district/index',
+    name: 'district',
+    meta: { title: '区县', icon: 'dashboard' },
+    children: [
+      {
+        path: 'index',
+        name: 'index',
+        component: () => import('@/views/district/index'),
+        meta: { title: '区县主页', icon: 'dashboard' }
+      },
+      {
+        hidden: true,
         path: 'fish',
         // ES2020语法 类似于require，动态导入组件
         component: () => import('@/views/department/task/index'),
         name: 'fish',
-        meta: { title: 'fish', icon: 'dashboard' }
+        meta: { title: 'fish' }
       },
       {
         hidden: true,
@@ -82,7 +114,7 @@ export const constantRoutes = [
         // ES2020语法 类似于require，动态导入组件
         component: () => import('@/views/department/task/index'),
         name: 'salted',
-        meta: { title: 'salted', icon: 'dashboard' }
+        meta: { title: 'salted' }
       }
     ]
   },

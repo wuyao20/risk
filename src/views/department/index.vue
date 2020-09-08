@@ -40,8 +40,8 @@
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center">
-        <template slot-scope="{row}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
+        <template slot-scope="{row, $index}">
+          <el-button type="primary" size="mini" @click="handleEdit(row, $index)">
             Edit
           </el-button>
           <el-button v-if="row.status!='published'" size="mini" type="success" @click="handleModifyStatus(row,'published')">
@@ -152,10 +152,21 @@ export default {
       }
       return ''
     },
-    handleUpdate() {
-      this.$router.push({
-        path: '/department/fish'
-      })
+    handleEdit(row, rowIndex) {
+      console.log(row, rowIndex)
+      switch (rowIndex) {
+        case 0:
+          this.$router.push({
+            path: '/department/statistics'
+          })
+          break
+        case 1:
+          this.$router.push({
+            path: '/department/monthReport'
+          })
+          break
+        default: break
+      }
     }
   }
 }
@@ -170,9 +181,5 @@ export default {
         font-size 30px
         line-height 46px
         margin-bottom 8px
-    .table
-      &.warning-row
-        background: oldlace
-      &.success-row
-        background: #f0f9eb
+        font-weight bold
 </style>
