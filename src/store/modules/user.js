@@ -22,6 +22,12 @@ const mutations = {
   SET_NAME: (state, name) => {
     state.name = name
   },
+  SET_USERID: (state, userId) => {
+    state.userId = userId
+  },
+  SET_ROLES: (state, roles) => {
+    state.roles = roles
+  },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
   }
@@ -34,8 +40,8 @@ const actions = {
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
         const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
+        commit('SET_TOKEN', data)
+        setToken(data)
         resolve()
       }).catch(error => {
         reject(error)
@@ -53,11 +59,12 @@ const actions = {
           return reject('Verification failed, please Login again.')
         }
 
-        const { name, avatar } = data
-
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
-        resolve(data)
+        const { userId, loginName } = data.user
+        const roles = data.gridCode
+        commit('SET_NAME', loginName)
+        commit('SET_USERID', userId)
+        commit('SET_ROLES', roles)
+        resolve(data.user)
       }).catch(error => {
         reject(error)
       })

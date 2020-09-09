@@ -70,7 +70,7 @@ export const constantRoutes = [
       },
       {
         hidden: true,
-        path: 'statistics',
+        path: 'statistics/:workId',
         // ES2020语法 类似于require，动态导入组件
         component: () => import('@/views/department/task/index'),
         name: 'Statistics',
@@ -78,7 +78,7 @@ export const constantRoutes = [
       },
       {
         hidden: true,
-        path: 'monthReport',
+        path: 'monthReport/:workId',
         // ES2020语法 类似于require，动态导入组件
         component: () => import('@/views/department/monthReport/index'),
         name: 'monthReport',
