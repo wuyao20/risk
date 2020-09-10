@@ -42,10 +42,10 @@
       <el-table-column label="备注" align="center">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="handleEdit(row)">
-            Edit
+            编辑
           </el-button>
           <el-button v-if="row.status!='published'" size="mini" type="success" @click="handleModifyStatus(row,'published')">
-            upload
+            上传
           </el-button>
         </template>
       </el-table-column>
@@ -86,6 +86,9 @@ export default {
       return ''
     },
     handleEdit(row) {
+      // this.$router.push({
+      //   path: `/department/monthReport/${row.workId}`
+      // })
       let workCodes = []
       getWorkCode().then(res => {
         workCodes = res.data

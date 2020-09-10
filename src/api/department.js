@@ -23,3 +23,18 @@ export function getWorkCode() {
   })
 }
 
+export function fillrecord(data) {
+  return request({
+    url: '/examine/fillrecord',
+    method: 'post',
+    data
+  })
+}
+
+export function monthReport(data) {
+  return request({
+    url: '/examine/mark',
+    method: 'post',
+    data
+  })
+}
