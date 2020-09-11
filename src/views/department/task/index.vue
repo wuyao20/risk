@@ -1,11 +1,5 @@
 <template>
-  <div
-    v-loading="loading"
-    class="app-container"
-    element-loading-text="拼命加载中"
-    element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(0, 0, 0, 0.8)"
-  >
+  <div class="app-container">
     <div class="title">
       <span>徐州联通廉洁风险防控工作检查、考核统计表</span>
     </div>
@@ -43,9 +37,10 @@
           </el-upload>
         </el-form-item>
       </div>
+      <el-divider />
       <el-form-item>
         <el-button type="primary" @click="onSubmit">立即提交</el-button>
-        <el-button>取消</el-button>
+        <el-button @click="onCancel">取消</el-button>
       </el-form-item>
     </el-form>
     <el-backtop />
@@ -60,9 +55,9 @@ export default {
   name: 'Index',
   data() {
     return {
+
       resList: [],
-      fileList: [],
-      loading: false
+      fileList: []
     }
   },
   computed: {
@@ -90,6 +85,9 @@ export default {
     })
   },
   methods: {
+    onCancel() {
+      this.$router.go(-1)
+    },
     labelCpu(index, label) {
       return index + '、 ' + label
     },
@@ -112,20 +110,19 @@ export default {
         fillMonth: this.fullDate,
         fillDetailList: temArr
       }
-      this.loading = true
+      const loading = this._openFullScreen2()
       // document.scrollingElement.scrollTop = 50%
       window.scrollTo({
         top: 0,
         behavior: 'smooth'
       })
       fillrecord(uploadData).then(res => {
-        this.loading = false
+        loading.close()
         if (res.errno === 0) {
           this.$notify.success({
             title: '成功',
             message: '填报成功'
           })
-          this.$router.go(-1)
         } else {
           this.$notify.error({
             title: '失败',
@@ -133,6 +130,15 @@ export default {
           })
         }
       })
+    },
+    _openFullScreen2() {
+      const loading = this.$loading({
+        lock: true,
+        text: 'Loading',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
+      return loading
     },
     handleError() {
       this.$notify.error({

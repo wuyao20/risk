@@ -38,3 +38,11 @@ export function monthReport(data) {
     data
   })
 }
+
+export function monthReportUpload(data) {
+  return request({
+    url: '/examine/writerecord',
+    method: 'post',
+    data
+  })
+}

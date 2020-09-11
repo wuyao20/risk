@@ -15,24 +15,29 @@
       label-position="top"
       class="form"
     >
-      <div v-for="(item, index) in resList" :key="index" v-if="item.isShow === 1" class="form-item">
+      <div v-for="(item, index) in resList" v-if="item.isShow === 1" :key="index" class="form-item">
         <el-form-item class="label-title" :label="labelCpu(item.rowName, index+1)">
           <el-input
+            v-model="item.content"
             type="textarea"
             autosize
             :placeholder="item.originalContent"
-            v-model="item.content"
             size="large"
           />
         </el-form-item>
       </div>
     </el-form>
+    <div class="button-container">
+      <el-divider />
+      <el-button type="primary" @click="onSubmit">立即提交</el-button>
+      <el-button @click="onCancel">取消</el-button>
+    </div>
     <el-backtop />
   </div>
 </template>
 
 <script>
-import { monthReport } from '../../../api/department'
+import { monthReport, monthReportUpload } from '../../../api/department'
 const date = new Date()
 export default {
   name: 'Index',
@@ -46,12 +51,23 @@ export default {
   computed: {
     workId() {
       return this.$route.params.workId
+    },
+    fullDate() {
+      let month = date.getMonth() + 1
+      if (month.toString().length < 2) {
+        month = '0' + month
+      }
+      let day = date.getDate()
+      if (day.toString().length < 2) {
+        day = '0' + day
+      }
+      return `${date.getFullYear()}${month}${day}`
     }
   },
   created() {
     monthReport({ workCode: this.workId }).then(res => {
       this.resList = res.data.map(item => {
-        item.content = undefined
+        item.content = item.originalContent
         return item
       })
     })
@@ -59,6 +75,54 @@ export default {
   methods: {
     labelCpu(label, index) {
       return index + '. ' + label
+    },
+    onSubmit() {
+      const temArr = this.resList.map(item => {
+        return {
+          columnId: item.columnId,
+          columnName: item.columnName,
+          content: item.content,
+          isShow: item.isShow
+        }
+      })
+      const uploadData = {
+        loginName: this.resList[0].loginName,
+        gridCode: this.resList[0].gridCode,
+        workCode: this.resList[0].workCode,
+        fillMonth: this.fullDate,
+        fillDetailList: temArr
+      }
+      const loading = this._openFullScreen2()
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      })
+      monthReportUpload(uploadData).then(res => {
+        if (res.errno === 0) {
+          loading.close()
+          this.$notify.success({
+            title: '成功',
+            message: '填写成功'
+          })
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: '填写失败，请刷新重试。'
+          })
+        }
+      })
+    },
+    onCancel() {
+      this.$router.go(-1)
+    },
+    _openFullScreen2() {
+      const loading = this.$loading({
+        lock: true,
+        text: 'Loading',
+        spinner: 'el-icon-loading',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
+      return loading
     }
   }
 }
@@ -94,6 +158,9 @@ export default {
             font-size 18px
             font-weight bold
           & >>> .el-textarea__inner
-            width 450px
+            width 500px
             font-size 17px
+    .button-container
+      margin-top 10px
+      padding 0 100px 0 100px
 </style>
