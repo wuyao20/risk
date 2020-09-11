@@ -7,7 +7,7 @@ export function login(data) {
     data
   })
 }
-
+// 查看用户的账号属性（部门/县分）
 export function getInfo() {
   return request({
     url: '/home/getgridcode',

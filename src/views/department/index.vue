@@ -86,9 +86,6 @@ export default {
       return ''
     },
     handleEdit(row) {
-      // this.$router.push({
-      //   path: `/department/monthReport/${row.workId}`
-      // })
       let workCodes = []
       getWorkCode().then(res => {
         workCodes = res.data

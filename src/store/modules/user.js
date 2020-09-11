@@ -66,7 +66,7 @@ const actions = {
         commit('SET_NAME', loginName)
         commit('SET_USERID', userId)
         commit('SET_ROLES', roles)
-        resolve(data.user)
+        resolve(data)
       }).catch(error => {
         reject(error)
       })

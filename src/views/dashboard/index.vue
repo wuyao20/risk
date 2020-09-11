@@ -1,56 +1,6 @@
 <template>
   <div class="dashboard-container">
-    <div class="dashboard-title">
-      <span>各责任部门廉控工作需求明细</span>
-    </div>
-    <el-table
-      :key="tableKey"
-      v-loading="listLoading"
-      :data="list"
-      border
-      fit
-      highlight-current-row
-      style="width: 100%;"
-      class="table"
-      :row-class-name="tableRowClassName"
-    >
-      <el-table-column label="序号" width="80px" align="center">
-        <template slot-scope="{ $index }">
-          <span>{{ $index + 1 }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="工作任务及要求" width="600px" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.task }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="频次" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.frequency }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="报送材料" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.data }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="工作完成时限要求" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.dateline }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="备注" align="center">
-        <template slot-scope="{row}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            Edit
-          </el-button>
-          <el-button v-if="row.status!='published'" size="mini" type="success" @click="handleModifyStatus(row,'published')">
-            upload
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <router-view />
+    个人信息展示TODO 完成了哪些任务 未完成的
   </div>
 </template>
 

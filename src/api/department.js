@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-
+// 选择区县还是部门的任务列表
 export function chooseWork(data) {
   return request({
     url: '/home/choosework',
