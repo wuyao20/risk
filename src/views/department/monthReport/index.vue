@@ -104,6 +104,7 @@ export default {
             title: '成功',
             message: '填写成功'
           })
+          this.$router.go(-1)
         } else {
           this.$notify.error({
             title: '失败',

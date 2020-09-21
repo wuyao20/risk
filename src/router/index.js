@@ -122,6 +122,21 @@ export const asyncRoutes = [
         meta: { title: 'salted', roles: [2] }
       }
     ]
+  },
+  {
+    path: '/admin',
+    component: Layout,
+    redirect: '/admin/index',
+    name: 'admin',
+    meta: { title: '管理', roles: [3] },
+    children: [
+      {
+        path: 'index',
+        name: 'index',
+        component: () => import('@/views/admin/index'),
+        meta: { title: '人员管理', icon: 'user', roles: [3] }
+      }
+    ]
   }
 ]
 

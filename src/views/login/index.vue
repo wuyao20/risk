@@ -74,7 +74,7 @@ export default {
     }
     return {
       loginForm: {
-        username: 'XPZ001',
+        username: 'JJZ000',
         password: '123456'
       },
       loginRules: {
@@ -93,6 +93,9 @@ export default {
       },
       immediate: true
     }
+  },
+  created() {
+    console.log(this.$route.query)
   },
   methods: {
     showPwd() {

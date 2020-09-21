@@ -31,6 +31,10 @@ export function fillrecord(data) {
   })
 }
 
+/**
+ * 部门或者区县月报
+ * @param data
+ */
 export function monthReport(data) {
   return request({
     url: '/examine/mark',
