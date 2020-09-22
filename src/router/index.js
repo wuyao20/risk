@@ -128,13 +128,19 @@ export const asyncRoutes = [
     component: Layout,
     redirect: '/admin/index',
     name: 'admin',
-    meta: { title: '管理', roles: [3] },
+    meta: { title: '主管理员', icon: 'user', roles: [3] },
     children: [
       {
         path: 'index',
         name: 'index',
         component: () => import('@/views/admin/index'),
         meta: { title: '人员管理', icon: 'user', roles: [3] }
+      },
+      {
+        path: 'summary',
+        name: 'summary',
+        component: () => import('@/views/admin/summary/index'),
+        meta: { title: '风险点管理', icon: 'example', roles: [3] }
       }
     ]
   }

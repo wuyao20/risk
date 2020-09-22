@@ -7,8 +7,12 @@
         <el-option v-for="item in departments" :key="item.depName" :label="item.depName" :value="item.depName" />
       </el-select>
       <div class="filter-item" style="margin-left: 5px;margin-right: 5px;">
-        <el-radio v-model="listQuery.enableFlage2" :label="department" border>部门</el-radio>
-        <el-radio v-model="listQuery.enableFlage2" :label="district" border>区县</el-radio>
+        <el-radio-group v-model="listQuery.enableFlage2" size="medium">
+          <el-radio-button :label="department" border>部门三级管理员</el-radio-button>
+          <el-radio-button :label="district" border>区县三级管理员</el-radio-button>
+          <el-radio-button :label="admin" border>系统管理员</el-radio-button>
+          <el-radio-button :label="secondaryAdmin" border>二级管理员</el-radio-button>
+        </el-radio-group>
       </div>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
@@ -58,7 +62,7 @@
       </el-table-column>
       <el-table-column label="归属部门/区县" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.enableFlage2===1 ?'部门':'区县' }}</span>
+          <span>{{ calcRoles(row.enableFlage2) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="action" align="center">
@@ -75,8 +79,8 @@
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="handleFilter" />
 
-    <el-dialog title="编辑用户" :visible.sync="dialogFormVisible" modal width="50%">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="120px" style="width: 60%; margin-left:50px;">
+    <el-dialog title="编辑用户" :visible.sync="dialogFormVisible" modal width="60%">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="120px" style="width: 70%; margin-left:50px;">
         <el-form-item label="登陆账号">
           <el-input v-model="temp.loginName" disabled="true" />
         </el-form-item>
@@ -87,14 +91,20 @@
           <el-input v-model="temp.name" />
         </el-form-item>
         <el-form-item label="部门" prop="department">
-          <el-input v-model="temp.department" />
+          <el-select v-model="temp.department" placeholder="部门名称" filterable  clearable>
+            <el-option v-for="item in departments" :key="item.depName" :label="item.depName" :value="item.depName" />
+          </el-select>
         </el-form-item>
         <el-form-item label="公司" prop="company">
           <el-input v-model="temp.company" />
         </el-form-item>
         <el-form-item label="归属部门/区县" prop="enableFlage2">
-          <el-radio v-model="temp.enableFlage2" :label="department" border>部门</el-radio>
-          <el-radio v-model="temp.enableFlage2" :label="district" border>区县</el-radio>
+          <el-radio-group v-model="temp.enableFlage2" size="medium">
+            <el-radio-button :label="department" border>部门三级管理员</el-radio-button>
+            <el-radio-button :label="district" border>区县三级管理员</el-radio-button>
+            <el-radio-button :label="admin" border>系统管理员</el-radio-button>
+            <el-radio-button :label="secondaryAdmin" border>二级管理员</el-radio-button>
+          </el-radio-group>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -107,8 +117,8 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="添加用户" :visible.sync="dialogAddFormVisible" modal width="50%">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="120px" style="width: 60%; margin-left:50px;">
+    <el-dialog title="添加用户" :visible.sync="dialogAddFormVisible" modal width="60%">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="120px" style="width: 70%; margin-left:50px;">
         <el-form-item label="账号" prop="loginName">
           <el-input v-model="temp.loginName" />
         </el-form-item>
@@ -119,14 +129,20 @@
           <el-input v-model="temp.name" />
         </el-form-item>
         <el-form-item label="部门" prop="department">
-          <el-input v-model="temp.department" />
+          <el-select v-model="temp.department" placeholder="部门名称" filterable  clearable>
+            <el-option v-for="item in departments" :key="item.depName" :label="item.depName" :value="item.depName" />
+          </el-select>
         </el-form-item>
         <el-form-item label="公司" prop="company">
           <el-input v-model="temp.company" />
         </el-form-item>
         <el-form-item label="归属部门/区县" prop="enableFlage2">
-          <el-radio v-model="temp.enableFlage2" :label="department" border>部门</el-radio>
-          <el-radio v-model="temp.enableFlage2" :label="district" border>区县</el-radio>
+          <el-radio-group v-model="temp.enableFlage2" size="medium">
+            <el-radio-button :label="department" border>部门三级管理员</el-radio-button>
+            <el-radio-button :label="district" border>区县三级管理员</el-radio-button>
+            <el-radio-button :label="admin" border>系统管理员</el-radio-button>
+            <el-radio-button :label="secondaryAdmin" border>二级管理员</el-radio-button>
+          </el-radio-group>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -154,6 +170,8 @@ export default {
     return {
       department: 1,
       district: 2,
+      admin: 3,
+      secondaryAdmin: 4,
       tableKey: 0,
       listLoading: false,
       list: [],
@@ -180,6 +198,8 @@ export default {
       }
     }
   },
+  computed: {
+  },
   created() {
     departmentList().then(res => {
       if (res.errno === 0) {
@@ -188,6 +208,20 @@ export default {
     })
   },
   methods: {
+    calcRoles(role) {
+      switch (role) {
+        case 1:
+          return '部门三级管理员'
+        case 2:
+          return '区县三级管理员'
+        case 3:
+          return '系统管理员'
+        case 4:
+          return '二级管理员'
+        default:
+          return '权限错误'
+      }
+    },
     handleFilter() {
       this.listLoading = true
       userPage(this.listQuery).then(res => {

@@ -37,3 +37,19 @@ export function addUser(data) {
     data
   })
 }
+
+export function queryColumn(data) {
+  return request({
+    url: '/examine/columnshow',
+    method: 'post',
+    data
+  })
+}
+
+export function updateColumn(data) {
+  return request({
+    url: '/examine/updatecolumn',
+    method: 'post',
+    data
+  })
+}
