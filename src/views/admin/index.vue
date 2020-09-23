@@ -91,7 +91,7 @@
           <el-input v-model="temp.name" />
         </el-form-item>
         <el-form-item label="部门" prop="department">
-          <el-select v-model="temp.department" placeholder="部门名称" filterable  clearable>
+          <el-select v-model="temp.department" placeholder="部门名称" filterable clearable>
             <el-option v-for="item in departments" :key="item.depName" :label="item.depName" :value="item.depName" />
           </el-select>
         </el-form-item>
@@ -129,7 +129,7 @@
           <el-input v-model="temp.name" />
         </el-form-item>
         <el-form-item label="部门" prop="department">
-          <el-select v-model="temp.department" placeholder="部门名称" filterable  clearable>
+          <el-select v-model="temp.department" placeholder="部门名称" filterable clearable>
             <el-option v-for="item in departments" :key="item.depName" :label="item.depName" :value="item.depName" />
           </el-select>
         </el-form-item>

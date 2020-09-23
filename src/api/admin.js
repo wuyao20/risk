@@ -53,3 +53,11 @@ export function updateColumn(data) {
     data
   })
 }
+
+export function getRecord(data) {
+  return request({
+    url: '/resshow/allfillpage',
+    method: 'post',
+    data
+  })
+}

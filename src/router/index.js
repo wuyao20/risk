@@ -141,6 +141,18 @@ export const asyncRoutes = [
         name: 'summary',
         component: () => import('@/views/admin/summary/index'),
         meta: { title: '风险点管理', icon: 'example', roles: [3] }
+      },
+      {
+        path: 'record',
+        name: 'record',
+        component: () => import('@/views/admin/record/index'),
+        meta: { title: '填写记录', icon: 'jilu', roles: [3] }
+      },
+      {
+        path: 'result',
+        name: 'result',
+        component: () => import('@/views/admin/result/index'),
+        meta: { title: '结果汇总', icon: 'nested', roles: [3] }
       }
     ]
   }

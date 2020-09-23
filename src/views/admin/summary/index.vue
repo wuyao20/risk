@@ -21,7 +21,7 @@
       </el-table-column>
       <el-table-column label="是否展示" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.isShow===1?'展示': '隐藏' }}</span>
+          <span>{{ row.isShow === 1 ? '展示' : '隐藏' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="是否展示" align="center">
@@ -48,14 +48,10 @@ export default {
       list: []
     }
   },
+  computed: {
+  },
   created() {
-    queryColumn({ gridCode: 1 }).then(res => {
-      const { data } = res
-      this.list = data.map(item => {
-        item.show = item.isShow === 1
-        return item
-      })
-    })
+    this._create()
   },
   methods: {
     switchChange(row) {
@@ -77,6 +73,16 @@ export default {
             message: '修改失败，请重试'
           })
         }
+        this._create()
+      })
+    },
+    _create() {
+      queryColumn({ gridCode: 1 }).then(res => {
+        const { data } = res
+        this.list = data.map(item => {
+          item.show = item.isShow === 1
+          return item
+        })
       })
     }
   }
