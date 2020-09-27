@@ -8,7 +8,8 @@ const getDefaultState = () => {
     name: '',
     avatar: '',
     userId: '',
-    roles: []
+    roles: [],
+    department: ''
   }
 }
 
@@ -32,6 +33,9 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  SET_DEPARTMENT: (state, department) => {
+    state.department = department
   }
 }
 
@@ -61,11 +65,12 @@ const actions = {
           return reject('Verification failed, please Login again.')
         }
 
-        const { userId, loginName } = data.user
+        const { userId, loginName, department } = data.user
         const roles = data.gridCode
         commit('SET_NAME', loginName)
         commit('SET_USERID', userId)
         commit('SET_ROLES', roles)
+        commit('SET_DEPARTMENT', department)
         resolve(data)
       }).catch(error => {
         reject(error)

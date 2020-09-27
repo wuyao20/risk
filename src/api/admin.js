@@ -61,3 +61,26 @@ export function getRecord(data) {
     data
   })
 }
+
+export function downloadSummaryTable(data) {
+  return request({
+    url: '/resshow/downlownd',
+    method: 'post',
+    data
+  })
+}
+
+export function getMonthReport(data) {
+  return request({
+    url: '/resshow/allwritepage',
+    method: 'post',
+    data
+  })
+}
+export function secAdminGetUserPage(data) {
+  return request({
+    url: '/user/depuserpage',
+    method: 'post',
+    data
+  })
+}

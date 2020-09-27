@@ -141,18 +141,48 @@ export const asyncRoutes = [
         name: 'summary',
         component: () => import('@/views/admin/summary/index'),
         meta: { title: '风险点管理', icon: 'example', roles: [3] }
-      },
+      }
+    ]
+  },
+  {
+    path: '/secadmin',
+    component: Layout,
+    redirect: '/secadmin/index',
+    name: 'secadmin',
+    meta: { title: '二级管理员', icon: 'user', roles: [4] },
+    children: [
+      {
+        path: 'index',
+        name: 'index',
+        component: () => import('@/views/secAdmin/index'),
+        meta: { title: '人员管理', icon: 'user', roles: [4] }
+      }
+    ]
+  },
+  {
+    path: '/result',
+    component: Layout,
+    redirect: '/result/record/index',
+    name: 'admin',
+    meta: { title: '结果汇总', icon: 'table', roles: [3] },
+    children: [
       {
         path: 'record',
         name: 'record',
-        component: () => import('@/views/admin/record/index'),
+        component: () => import('@/views/result/record/index'),
         meta: { title: '填写记录', icon: 'jilu', roles: [3] }
       },
       {
         path: 'result',
         name: 'result',
-        component: () => import('@/views/admin/result/index'),
-        meta: { title: '结果汇总', icon: 'nested', roles: [3] }
+        component: () => import('@/views/result/month/index'),
+        meta: { title: '部门月报', icon: 'nested', roles: [3] }
+      },
+      {
+        path: 'district',
+        name: 'district',
+        component: () => import('@/views/result/month/district'),
+        meta: { title: '区县月报', icon: 'nested', roles: [3] }
       }
     ]
   }

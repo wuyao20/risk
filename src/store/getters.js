@@ -6,6 +6,7 @@ const getters = {
   name: state => state.user.name,
   roles: state => state.user.roles,
   userId: state => state.user.userId,
-  permission_routes: state => state.permission.routes
+  permission_routes: state => state.permission.routes,
+  vuexDepartment: state => state.user.department
 }
 export default getters

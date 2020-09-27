@@ -8,14 +8,18 @@
       <el-date-picker
         v-model="listQuery.fillMonth"
         type="month"
-        placeholder="选择月"
+        placeholder="选择月份"
         class="filter-item"
+        format="yyyy 年 MM 月"
+        value-format="yyyyMM"
       />
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
+      <el-button class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
+        下载
+      </el-button>
     </div>
-
     <el-table
       :data="list"
       border
@@ -61,7 +65,7 @@
             </el-table-column>
             <el-table-column label="填写时间" align="center" width="100">
               <template slot-scope="{row}">
-                <span>{{ row.fillMonth }}</span>
+                <span>{{ row.fillTime.substring(0, 10) }}</span>
               </template>
             </el-table-column>
           </el-table>
@@ -77,22 +81,25 @@
           <span>{{ row.loginName }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="填写人员" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.name }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="部门" align="center">
         <template slot-scope="{row}">
           <span>{{ row.department }}</span>
         </template>
       </el-table-column>
     </el-table>
-
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.currentPage" :limit.sync="listQuery.pageSize" @pagination="handleFilter" />
 
   </div>
 </template>
 
 <script>
-import { departmentList, getRecord } from '../../../api/admin'
+import { departmentList, getMonthReport } from '../../../api/admin'
 import Pagination from '@/components/Pagination'
-
 export default {
   name: 'Index',
   components: {
@@ -124,7 +131,7 @@ export default {
   methods: {
     handleFilter() {
       this.listLoading = true
-      getRecord(this.listQuery).then(res => {
+      getMonthReport(this.listQuery).then(res => {
         this.list = res.data.content
         this.total = this.list.length
         this.listLoading = false
@@ -134,6 +141,6 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 
 </style>
