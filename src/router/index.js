@@ -156,6 +156,12 @@ export const asyncRoutes = [
         name: 'index',
         component: () => import('@/views/secAdmin/index'),
         meta: { title: '人员管理', icon: 'user', roles: [4] }
+      },
+      {
+        path: 'authmanage',
+        name: 'authmanage',
+        component: () => import('@/views/secAdmin/authManage/index'),
+        meta: { title: '权限管理', icon: 'example', roles: [4] }
       }
     ]
   },
