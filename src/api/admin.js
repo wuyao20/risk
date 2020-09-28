@@ -84,3 +84,33 @@ export function secAdminGetUserPage(data) {
     data
   })
 }
+
+export function adminAuthority(data) {
+  return request({
+    url: '/access/accesspage',
+    method: 'post',
+    data
+  })
+}
+
+export function getAllWorkCode() {
+  return request({
+    url: '/home/allWorkCode',
+    method: 'get'
+  })
+}
+export function adminUpdateUserAccess(data) {
+  return request({
+    url: '/access/upadteaccess',
+    method: 'post',
+    data
+  })
+}
+
+export function adminDeleteUserAccess(data) {
+  return request({
+    url: '/access/delaccess',
+    method: 'post',
+    data
+  })
+}

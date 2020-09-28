@@ -141,6 +141,12 @@ export const asyncRoutes = [
         name: 'summary',
         component: () => import('@/views/admin/summary/index'),
         meta: { title: '风险点管理', icon: 'example', roles: [3] }
+      },
+      {
+        path: 'authority',
+        name: 'authority',
+        component: () => import('@/views/admin/authority/index'),
+        meta: { title: '权限管理', icon: 'password', roles: [3] }
       }
     ]
   },

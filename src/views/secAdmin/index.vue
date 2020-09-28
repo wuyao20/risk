@@ -61,7 +61,7 @@
           <span>{{ calcRoles(row.enableFlage2) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="action" align="center">
+      <el-table-column label="操作" align="center">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
