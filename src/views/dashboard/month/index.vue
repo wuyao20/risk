@@ -48,7 +48,7 @@
       </el-table-column>
       <el-table-column label="填写时间" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.fillTime.substring(0,10) }}</span>
+          <span>{{ row.fillTime.substring(0, 10) }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import { queryMyRecord } from '../../api/admin'
+import { queryMyMonthRecord } from '../../../api/admin'
 export default {
   name: 'Index',
   data() {
@@ -72,7 +72,7 @@ export default {
     handleFilter() {
       this.listLoading = true
       if (this.listQuery.fillMonth !== '') {
-        queryMyRecord(this.listQuery).then(res => {
+        queryMyMonthRecord(this.listQuery).then(res => {
           this.list = res.data[0].record
           this.listLoading = false
         })

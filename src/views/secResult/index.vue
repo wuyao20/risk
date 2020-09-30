@@ -2,9 +2,6 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="listQuery.loginName" placeholder="登陆账号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.department" placeholder="部门名称" clearable style="width: 200px" class="filter-item">
-        <el-option v-for="item in departments" :key="item.depName" :label="item.depName" :value="item.depName" />
-      </el-select>
       <el-date-picker
         v-model="listQuery.fillMonth"
         type="month"
@@ -18,9 +15,6 @@
       </el-button>
       <el-button class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
         下载
-      </el-button>
-      <el-button class="filter-item" type="primary" icon="el-icon-download" @click="handleAllDownload">
-        全部下载1
       </el-button>
     </div>
 
@@ -69,7 +63,7 @@
             </el-table-column>
             <el-table-column label="填写时间" align="center" width="100">
               <template slot-scope="{row}">
-                <span>{{ row.fillTime.substring(0, 10) }}</span>
+                <span>{{ row.fillTime?row.fillTime.substring(0, 10):'无填写记录' }}</span>
               </template>
             </el-table-column>
           </el-table>
@@ -103,9 +97,9 @@
 </template>
 
 <script>
-import { departmentList, getRecord, downloadSummaryTable, downloadAll } from '../../../api/admin'
+import { getDepartmentRecord, downloadSummaryTable } from '../../api/admin'
 import Pagination from '@/components/Pagination'
-import axios from 'axios'
+
 export default {
   name: 'Index',
   components: {
@@ -120,19 +114,11 @@ export default {
         currentPage: 1,
         pageSize: 20,
         loginName: '',
-        fillMonth: '',
-        department: ''
+        fillMonth: ''
       },
       listLoading: false,
       list: []
     }
-  },
-  created() {
-    departmentList().then(res => {
-      if (res.errno === 0) {
-        this.departments = res.data.deplist
-      }
-    })
   },
   methods: {
     handleDownload() {
@@ -145,56 +131,10 @@ export default {
         downloadSummaryTable({ fillMonth: this.listQuery.fillMonth })
       }
     },
-    handleAllDownload() {
-      if (this.listQuery.fillMonth === '') {
-        this.$notify.error({
-          title: '错误',
-          message: '请先选择月份'
-        })
-      } else {
-        axios.post('http://139.224.135.165:8080/risk/resshow/downlownd', { responseType: 'blob' })
-          .then((res) => {
-            const { data, headers } = res
-            console.log(headers['content-disposition'])
-            const fileName = headers['content-disposition'].replace(/\w+;filename=(.*)/, '$1')
-            // 此处当返回json文件时需要先对data进行JSON.stringify处理，其他类型文件不用做处理
-            // const blob = new Blob([JSON.stringify(data)], ...)
-            const blob = new Blob([data], { type: headers['content-type'] })
-            const dom = document.createElement('a')
-            const url = window.URL.createObjectURL(blob)
-            dom.href = url
-            dom.download = decodeURI(fileName)
-            dom.style.display = 'none'
-            document.body.appendChild(dom)
-            dom.click()
-            dom.parentNode.removeChild(dom)
-            window.URL.revokeObjectURL(url)
-          })
-        // downloadAll({ fillMonth: this.listQuery.fillMonth })
-        //   .then(res => {
-        //     console.log('salted fish')
-        //     console.log(res)
-        //     const { data, headers } = res
-        //     const fileName = headers['content-disposition'].replace(/\w+;filename=(.*)/, '$1')
-        //     // 此处当返回json文件时需要先对data进行JSON.stringify处理，其他类型文件不用做处理
-        //     // const blob = new Blob([JSON.stringify(data)], ...)
-        //     const blob = new Blob([data], { type: headers['content-type'] })
-        //     const dom = document.createElement('a')
-        //     const url = window.URL.createObjectURL(blob)
-        //     dom.href = url
-        //     dom.download = decodeURI(fileName)
-        //     dom.style.display = 'none'
-        //     document.body.appendChild(dom)
-        //     dom.click()
-        //     dom.parentNode.removeChild(dom)
-        //     window.URL.revokeObjectURL(url)
-        //   })
-      }
-    },
     handleFilter() {
       this.listLoading = true
-      getRecord(this.listQuery).then(res => {
-        this.list = res.data.content
+      getDepartmentRecord(this.listQuery).then(res => {
+        this.list = res.data
         this.total = this.list.length
         this.listLoading = false
       })

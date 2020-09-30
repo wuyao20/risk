@@ -3,18 +3,17 @@
     <div class="filter-container">
       <el-input v-model="listQuery.loginName" placeholder="登陆账号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.name" placeholder="姓名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-select v-model="listQuery.department" placeholder="部门名称" clearable style="width: 200px" class="filter-item">
+        <el-option v-for="item in departments" :key="item.depName" :label="item.depName" :value="item.depName" />
+      </el-select>
       <div class="filter-item" style="margin-left: 5px;margin-right: 5px;">
         <el-radio-group v-model="listQuery.enableFlage2" size="medium">
           <el-radio-button :label="department" border>部门三级管理员</el-radio-button>
-          <el-radio-button :label="district" border>区县三级管理员</el-radio-button>
           <el-radio-button :label="secondaryAdmin" border>二级管理员</el-radio-button>
         </el-radio-group>
       </div>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
-      </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
-        添加
       </el-button>
     </div>
     <el-table
@@ -61,80 +60,55 @@
           <span>{{ calcRoles(row.enableFlage2) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="300px">
+      <el-table-column label="操作" align="center">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
           </el-button>
-          <el-button type="success" size="mini" @click="handleSign(row)">
-            登陆
-          </el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(row)">
+          <!-- <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row)">
             删除
-          </el-button>
+          </el-button> -->
         </template>
       </el-table-column>
     </el-table>
+
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="handleFilter" />
 
-    <el-dialog title="添加用户" :visible.sync="dialogAddFormVisible" modal width="60%">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="120px" style="width: 70%; margin-left:50px;">
-        <el-form-item label="账号" prop="loginName">
-          <el-input v-model="temp.loginName" />
-        </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input v-model="temp.password" />
-        </el-form-item>
-        <el-form-item label="姓名" prop="name">
-          <el-input v-model="temp.name" />
-        </el-form-item>
-        <el-form-item label="部门" prop="department">
-          <el-input v-model="temp.department" :disabled="disableInput" />
-        </el-form-item>
-        <el-form-item label="公司" prop="company">
-          <el-input v-model="temp.company" />
-        </el-form-item>
-        <el-form-item label="归属部门/区县" prop="enableFlage2">
-          <el-radio-group v-model="temp.enableFlage2" size="medium">
-            <el-radio-button :label="department" border>部门三级管理员</el-radio-button>
-            <el-radio-button :label="district" border>区县三级管理员</el-radio-button>
-            <el-radio-button :label="secondaryAdmin" border>二级管理员</el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogAddFormVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" @click="createData">
-          确认
-        </el-button>
-      </div>
-    </el-dialog>
-
-    <el-dialog title="编辑用户" :visible.sync="dialogFormVisible" modal width="60%">
-      <el-form ref="dataEditForm" :rules="rules" :model="temp" label-position="left" label-width="120px" style="width: 70%; margin-left:50px;">
+    <el-dialog title="编辑用户" :visible.sync="dialogFormVisible" modal width="80%">
+      <el-form ref="dataForm" :model="temp" label-position="left" label-width="120px" style="width: 80%; margin-left:50px;">
         <el-form-item label="登陆账号">
-          <el-input v-model="temp.loginName" :disabled="disableInput" />
-        </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input v-model="temp.password" />
+          <el-input v-model="temp.loginName" :disabled="dialogDisable" />
         </el-form-item>
         <el-form-item label="姓名" prop="name">
-          <el-input v-model="temp.name" />
+          <el-input v-model="temp.name" :disabled="dialogDisable" />
         </el-form-item>
         <el-form-item label="部门" prop="department">
-          <el-input v-model="temp.department" :disabled="disableInput" />
+          <el-input v-model="temp.department" :disabled="dialogDisable" />
         </el-form-item>
-        <el-form-item label="公司" prop="company">
-          <el-input v-model="temp.company" />
-        </el-form-item>
-        <el-form-item label="归属部门/区县" prop="enableFlage2">
-          <el-radio-group v-model="temp.enableFlage2" size="medium">
-            <el-radio-button :label="department" border>部门三级管理员</el-radio-button>
-            <el-radio-button :label="district" border>区县三级管理员</el-radio-button>
-            <el-radio-button :label="secondaryAdmin" border>二级管理员</el-radio-button>
-          </el-radio-group>
+        <el-form-item label="权限">
+          <el-table
+            ref="singleTable"
+            :data="temp.columns"
+            highlight-current-row
+            fit
+            border
+            style="width: 100%"
+            @selection-change="handleSelectionChange"
+          >
+            <el-table-column
+              type="selection"
+              width="50"
+            />
+            <el-table-column
+              property="columnName"
+              label="列名称"
+            />
+            <el-table-column label="初始内容">
+              <template slot-scope="{row}">
+                <el-input v-model="row.originalContent" placeholder="请输入初始值" />
+              </template>
+            </el-table-column>
+          </el-table>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -150,8 +124,7 @@
 </template>
 
 <script>
-import { secAdminGetUserPage, updateUser, deleteUser, addUser } from '../../api/admin'
-import { mapGetters } from 'vuex'
+import { departmentList, userPage, updateDepAuthority, deleteUser, addUser, queryColumn } from '../../../api/admin'
 import Pagination from '@/components/Pagination'
 export default {
   name: 'Index',
@@ -160,16 +133,14 @@ export default {
   },
   data() {
     return {
-      dialogFormVisible: false,
-      disableInput: true,
-      temp: {},
-      dialogAddFormVisible: false,
+      dialogDisable: true,
       department: 1,
       district: 2,
       admin: 3,
       secondaryAdmin: 4,
-      tableKey: 1,
-      departments: [],
+      tableKey: 0,
+      listLoading: false,
+      list: [],
       listQuery: {
         pageNum: 1,
         pageSize: 20,
@@ -179,33 +150,26 @@ export default {
         enableFlage2: 1
       },
       total: 0,
-      list: [],
-      listLoading: false,
-      rules: {
-        loginName: [{ required: true, message: 'loginName is required', trigger: 'change' }],
-        name: [{ required: true, message: 'name is required', trigger: 'change' }],
-        password: [{ required: true, message: 'password is required', trigger: 'change' }],
-        company: [{ required: true, message: 'company is required', trigger: 'change' }],
-        department: [{ required: true, message: 'department is required', trigger: 'change' }],
-        enableFlage2: [{ required: true, message: 'enableFlage2 is required', trigger: 'change' }]
-      }
+      departments: [],
+      dialogFormVisible: false,
+      dialogAddFormVisible: false,
+      temp: {},
+      columns: [],
+      resList: []
     }
   },
   computed: {
-    ...mapGetters([
-      'vuexDepartment'
-    ])
   },
   created() {
+    departmentList().then(res => {
+      if (res.errno === 0) {
+        this.departments = res.data.deplist
+      }
+    })
   },
   methods: {
-    async handleSign(row) {
-      await this.$store.dispatch('user/logout')
-      this.$router.push({ path: `/login?username=${row.loginName}&password=${row.password}` })
-    },
-    async logout() {
-      await this.$store.dispatch('user/logout')
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+    handleSelectionChange(val) {
+      this.temp.content = val
     },
     calcRoles(role) {
       switch (role) {
@@ -223,32 +187,29 @@ export default {
     },
     handleFilter() {
       this.listLoading = true
-      secAdminGetUserPage(this.listQuery).then(res => {
+      userPage(this.listQuery).then(res => {
         this.list = res.data.users.list
         this.total = res.data.users.total
         this.listLoading = false
       })
     },
-    resetTemp() {
-      this.temp = { department: this.vuexDepartment }
-    },
-    handleCreate() {
-      this.resetTemp()
-      this.dialogAddFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
     handleUpdate(row) {
-      this.temp = Object.assign({}, row) // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp)
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataEditForm'].clearValidate()
+      queryColumn({ gridCode: 1 }).then(res => {
+        this.temp = Object.assign({}, row) // copy obj
+        const { data } = res
+        this.temp.columns = data.map(item => {
+          item.show = item.isShow === 1
+          return item
+        })
+        this.dialogFormVisible = true
+        this.$nextTick(() => {
+          this.$refs['dataForm'].clearValidate()
+        })
       })
     },
     updateData() {
-      updateUser(this.temp).then(res => {
+      console.log(this.temp)
+      updateDepAuthority(this.temp).then(res => {
         const { errno, data } = res
         if (errno === 0) {
           this.$notify.success({
@@ -283,6 +244,16 @@ export default {
         this.handleFilter()
       })
     },
+    resetTemp() {
+      this.temp = {}
+    },
+    handleCreate() {
+      this.resetTemp()
+      this.dialogAddFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
     handleDelete(row) {
       deleteUser({ userId: row.userId }).then(res => {
         const { errno, data } = res
@@ -304,6 +275,6 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 
 </style>

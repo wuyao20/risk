@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { MessageBox, Message, Notification } from 'element-ui'
+import { Notification } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 
@@ -44,6 +44,7 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
+    // res.headers = Object.assign({}, response.headers)
     return res
     // if the custom code is not 20000, it is judged as an error.
     /* if (res.code !== 20000) {

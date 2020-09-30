@@ -78,10 +78,11 @@ export default {
       return index + '. ' + label
     },
     onSubmit() {
+      console.log(this.resList)
       const temArr = this.resList.map(item => {
         return {
-          columnId: item.columnId,
-          columnName: item.columnName,
+          columnId: item.rowId,
+          columnName: item.rowName,
           content: item.content,
           isShow: item.isShow
         }

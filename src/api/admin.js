@@ -70,6 +70,14 @@ export function downloadSummaryTable(data) {
   })
 }
 
+export function downloadAll(data) {
+  return request({
+    url: '/resshow/downlownd',
+    method: 'post',
+    data
+  })
+}
+
 export function getMonthReport(data) {
   return request({
     url: '/resshow/allwritepage',
@@ -110,6 +118,42 @@ export function adminUpdateUserAccess(data) {
 export function adminDeleteUserAccess(data) {
   return request({
     url: '/access/delaccess',
+    method: 'post',
+    data
+  })
+}
+export function secAdminGetUserAccess(data) {
+  return request({
+    url: '/access/accessdeppage',
+    method: 'post',
+    data
+  })
+}
+
+export function getDepartmentRecord(data) {
+  return request({
+    url: '/resshow/depallfill',
+    method: 'post',
+    data
+  })
+}
+export function updateDepAuthority(data) {
+  return request({
+    url: '/examine/addrelation',
+    method: 'post',
+    data
+  })
+}
+export function queryMyRecord(data) {
+  return request({
+    url: '/examine/myrecord',
+    method: 'post',
+    data
+  })
+}
+export function queryMyMonthRecord(data) {
+  return request({
+    url: '/examine/merecord',
     method: 'post',
     data
   })

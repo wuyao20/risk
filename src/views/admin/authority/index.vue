@@ -24,7 +24,7 @@
           <el-table
             :key="tableKey"
             v-loading="listLoading"
-            :data="calcWordcode(props.row.workCode)"
+            :data="calcWordcode(props.row.userAccesses)"
             border
             fit
             highlight-current-row
@@ -80,7 +80,7 @@
       </el-table-column>
       <el-table-column label="部门/区县权限" align="center">
         <template slot-scope="{row}">
-          <span>{{ calcGridcode(row.gridCode) }}</span>
+          <span>{{ calcGridcode(row.enableFlage2) }}</span>
         </template>
       </el-table-column>
 
@@ -111,16 +111,16 @@
         </el-form-item>
         <el-form-item label="权限">
           <el-table
-            ref="singleTable"
+            ref="multipleTable"
             :data="temp.workcodes"
             highlight-current-row
             fit
             border
             style="width: 100%"
-            @current-change="handleCurrentChange"
+            @selection-change="handleSelectionChange"
           >
             <el-table-column
-              type="index"
+              type="selection"
               width="50"
             />
             <el-table-column
@@ -181,7 +181,8 @@ export default {
       total: 0,
       listLoading: false,
       workcodes: [],
-      currentRow: null
+      currentRow: null,
+      multipleSelection: null
     }
   },
   created() {
@@ -215,7 +216,7 @@ export default {
       })
     },
     updateData() {
-      adminUpdateUserAccess({ acessId: this.temp.acessId, workCode: this.temp.workCode }).then(res => {
+      adminUpdateUserAccess(this.temp).then(res => {
         const { errno, data } = res
         if (errno === 0) {
           this.$notify.success({
@@ -232,18 +233,40 @@ export default {
         this.handleFilter()
       })
     },
-    handleCurrentChange(currentRow) {
-      this.temp.workCode = currentRow.workId
+    handleSelectionChange(val) {
+      this.temp.userAccesses = val.map(item => {
+        return item.workId
+      })
+    },
+    // 选择多行
+    toggleSelection(rows) {
+      console.log(rows)
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row)
+        })
+      } else {
+        this.$refs.multipleTable.clearSelection()
+      }
     },
     handleUpdate(row) {
-      chooseWork({ gridCode: row.gridCode }).then(res => {
+      console.log(row)
+      chooseWork({ gridCode: row.enableFlage2 }).then(res => {
         this.temp = Object.assign({}, row) // copy obj
         this.temp.workcodes = res.data
-        const index = this.temp.workcodes.findIndex(item => {
-          return item.workId === row.workCode
-        })
+        const result = []
+        for (let i = 0; i < row.userAccesses.length; i++) {
+          const index = this.temp.workcodes.findIndex(item => {
+            return item.workId === row.userAccesses[i]
+          })
+          result.push(index)
+        }
+        console.log(result)
         this.$nextTick(() => {
-          this.$refs['singleTable'].setCurrentRow(this.temp.workcodes[index])
+          const rows = result.map(item => {
+            return this.temp.workcodes[item]
+          })
+          this.toggleSelection(rows)
           this.$refs['dataForm'].clearValidate()
         })
         this.dialogFormVisible = true
@@ -268,9 +291,18 @@ export default {
       }
     },
     calcWordcode(code) {
-      return [this.workcodes.find(item => {
-        return item.workId === code
-      })]
+      const result = []
+      for (let i = 0; i < code.length; i++) {
+        const index = this.workcodes.findIndex(item => {
+          return item.workId === code[i]
+        })
+        result.push(index)
+      }
+      console.log(result)
+      const rows = result.map(item => {
+        return this.workcodes[item]
+      })
+      return rows
     }
   }
 }

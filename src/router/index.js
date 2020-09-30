@@ -47,12 +47,21 @@ export const constantRoutes = [
     path: '/',
     component: Layout,
     redirect: '/dashboard',
-    children: [{
-      path: 'dashboard',
-      name: 'Dashboard',
-      component: () => import('@/views/dashboard/index'),
-      meta: { title: '主页', icon: 'dashboard' }
-    }]
+    meta: { title: '主页', icon: 'dashboard' },
+    children: [
+      {
+        path: 'dashboard',
+        name: 'dashboard',
+        component: () => import('@/views/dashboard/index'),
+        meta: { title: '风险点填写记录', icon: 'dashboard' }
+      },
+      {
+        path: 'result',
+        name: 'result',
+        component: () => import('@/views/dashboard/month/index'),
+        meta: { title: '月报填写记录', icon: 'nested' }
+      }
+    ]
   },
 
   // 404 page must be placed at the end !!!
@@ -147,6 +156,12 @@ export const asyncRoutes = [
         name: 'authority',
         component: () => import('@/views/admin/authority/index'),
         meta: { title: '权限管理', icon: 'password', roles: [3] }
+      },
+      {
+        path: 'depauthority',
+        name: 'depauthority',
+        component: () => import('@/views/admin/depAuthority/index'),
+        meta: { title: '部门权限管理', icon: 'password', roles: [3] }
       }
     ]
   },
@@ -195,6 +210,21 @@ export const asyncRoutes = [
         name: 'district',
         component: () => import('@/views/result/month/district'),
         meta: { title: '区县月报', icon: 'nested', roles: [3] }
+      }
+    ]
+  },
+  {
+    path: '/secresult',
+    component: Layout,
+    redirect: '/secresult/index',
+    name: 'admin',
+    meta: { title: '结果汇总', icon: 'table', roles: [4] },
+    children: [
+      {
+        path: 'index',
+        name: 'index',
+        component: () => import('@/views/secResult/index'),
+        meta: { title: '填写记录', icon: 'jilu', roles: [4] }
       }
     ]
   }
