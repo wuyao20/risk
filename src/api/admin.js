@@ -62,6 +62,14 @@ export function getRecord(data) {
   })
 }
 
+export function getRecordNoPage(data) {
+  return request({
+    url: '/resshow/allfill',
+    method: 'post',
+    data
+  })
+}
+
 export function downloadSummaryTable(data) {
   return request({
     url: '/resshow/downlownd',
@@ -154,6 +162,45 @@ export function queryMyRecord(data) {
 export function queryMyMonthRecord(data) {
   return request({
     url: '/examine/merecord',
+    method: 'post',
+    data
+  })
+}
+
+export function queryDepartWrite(data) {
+  return request({
+    url: '/resshow/depallwrite',
+    method: 'post',
+    data
+  })
+}
+
+export function queryDistrictWrite(data) {
+  return request({
+    url: '/resshow/disallwrite',
+    method: 'post',
+    data
+  })
+}
+
+export function queryDistrictWritePage(data) {
+  return request({
+    url: '/resshow/diswritepage',
+    method: 'post',
+    data
+  })
+}
+
+export function getMyDepartment(data) {
+  return request({
+    url: '/resshow/depallfill',
+    method: 'post',
+    data
+  })
+}
+export function getMyDepartmentPage(data) {
+  return request({
+    url: '/resshow/depallfillpage',
     method: 'post',
     data
   })

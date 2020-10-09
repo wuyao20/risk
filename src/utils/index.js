@@ -2,6 +2,15 @@
  * Created by PanJiaChen on 16/11/18.
  */
 
+export function parseTime2(time) {
+  if (arguments.length === 0 || !time) {
+    return null
+    // 2020-09-10T01:53:12.000+0000
+  }
+  const d = new Date(time)
+  const times = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds()
+  return times
+}
 /**
  * Parse the time to string
  * @param {(Object|string|number)} time
@@ -11,6 +20,7 @@
 export function parseTime(time, cFormat) {
   if (arguments.length === 0 || !time) {
     return null
+    // 2020-09-10T01:53:12.000+0000
   }
   const format = cFormat || '{y}-{m}-{d} {h}:{i}:{s}'
   let date

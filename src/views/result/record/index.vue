@@ -16,11 +16,11 @@
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
-      <el-button class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
+      <el-button class="filter-item" :loading="downloadLoading" type="primary" icon="el-icon-download" @click="handleDownload">
         下载
       </el-button>
       <el-button class="filter-item" type="primary" icon="el-icon-download" @click="handleAllDownload">
-        全部下载1
+        下载全部附件
       </el-button>
     </div>
 
@@ -67,9 +67,9 @@
                 <span>{{ row.content }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="填写时间" align="center" width="100">
+            <el-table-column label="填写时间" align="center" width="120">
               <template slot-scope="{row}">
-                <span>{{ row.fillTime.substring(0, 10) }}</span>
+                <span>{{ row.fillTime | parseTime2() }}</span>
               </template>
             </el-table-column>
           </el-table>
@@ -96,14 +96,13 @@
         </template>
       </el-table-column>
     </el-table>
-
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.currentPage" :limit.sync="listQuery.pageSize" @pagination="handleFilter" />
-
   </div>
 </template>
 
 <script>
-import { departmentList, getRecord, downloadSummaryTable, downloadAll } from '../../../api/admin'
+import { departmentList, getRecord, getRecordNoPage } from '../../../api/admin'
+import { parseTime2 } from '../../../utils'
 import Pagination from '@/components/Pagination'
 import axios from 'axios'
 export default {
@@ -124,7 +123,8 @@ export default {
         department: ''
       },
       listLoading: false,
-      list: []
+      list: [],
+      downloadLoading: false
     }
   },
   created() {
@@ -142,8 +142,47 @@ export default {
           message: '请先选择月份'
         })
       } else {
-        downloadSummaryTable({ fillMonth: this.listQuery.fillMonth })
+        this.downloadLoading = true
+        getRecordNoPage(this.listQuery).then(res => {
+          const tmp = res.data
+          const result = []
+          for (let j = 0; j < tmp.length; j++) {
+            for (let i = 0; i < tmp[j].record.length; i++) {
+              result.push({
+                loginName: tmp[j].loginName,
+                name: tmp[j].name,
+                department: tmp[j].department,
+                id: tmp[j].record[i].id,
+                columnName: tmp[j].record[i].columnName,
+                content: tmp[j].record[i].content,
+                fillMonth: tmp[j].record[i].fillMonth,
+                fillTime: tmp[j].record[i].fillTime
+              })
+            }
+          }
+          import('@/vendor/Export2Excel').then(excel => {
+            const tHeader = ['id', '账号', '姓名', '部门', '列名称', '填写内容', '填写时间']
+            const filterVal = ['id', 'loginName', 'name', 'department', 'columnName', 'content', 'fillTime']
+            const data = this.formatJson(filterVal, result)
+            console.log(data, result)
+            excel.export_json_to_excel({
+              header: tHeader,
+              data,
+              filename: `${this.listQuery.fillMonth}-${this.listQuery.department}-${this.listQuery.loginName}-风险点填写记录`
+            })
+            this.downloadLoading = false
+          })
+        })
       }
+    },
+    formatJson(filterVal, data) {
+      return data.map(v => filterVal.map(j => {
+        if (j === 'fillTime') {
+          return parseTime2(v[j])
+        } else {
+          return v[j]
+        }
+      }))
     },
     handleAllDownload() {
       if (this.listQuery.fillMonth === '') {
@@ -152,11 +191,10 @@ export default {
           message: '请先选择月份'
         })
       } else {
-        axios.post('http://139.224.135.165:8080/risk/resshow/downlownd', { responseType: 'blob' })
+        axios.post('http://139.224.135.165:8080/risk/resshow/downlownd', { fillMonth: this.listQuery.fillMonth }, { responseType: 'blob' })
           .then((res) => {
             const { data, headers } = res
-            console.log(headers['content-disposition'])
-            const fileName = headers['content-disposition'].replace(/\w+;filename=(.*)/, '$1')
+            const fileName = headers['content-disposition'].replace(/\w+;.+filename=(.*)/, '$1')
             // 此处当返回json文件时需要先对data进行JSON.stringify处理，其他类型文件不用做处理
             // const blob = new Blob([JSON.stringify(data)], ...)
             const blob = new Blob([data], { type: headers['content-type'] })
@@ -170,25 +208,6 @@ export default {
             dom.parentNode.removeChild(dom)
             window.URL.revokeObjectURL(url)
           })
-        // downloadAll({ fillMonth: this.listQuery.fillMonth })
-        //   .then(res => {
-        //     console.log('salted fish')
-        //     console.log(res)
-        //     const { data, headers } = res
-        //     const fileName = headers['content-disposition'].replace(/\w+;filename=(.*)/, '$1')
-        //     // 此处当返回json文件时需要先对data进行JSON.stringify处理，其他类型文件不用做处理
-        //     // const blob = new Blob([JSON.stringify(data)], ...)
-        //     const blob = new Blob([data], { type: headers['content-type'] })
-        //     const dom = document.createElement('a')
-        //     const url = window.URL.createObjectURL(blob)
-        //     dom.href = url
-        //     dom.download = decodeURI(fileName)
-        //     dom.style.display = 'none'
-        //     document.body.appendChild(dom)
-        //     dom.click()
-        //     dom.parentNode.removeChild(dom)
-        //     window.URL.revokeObjectURL(url)
-        //   })
       }
     },
     handleFilter() {

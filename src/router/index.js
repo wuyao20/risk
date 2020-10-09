@@ -197,7 +197,7 @@ export const asyncRoutes = [
         path: 'record',
         name: 'record',
         component: () => import('@/views/result/record/index'),
-        meta: { title: '填写记录', icon: 'jilu', roles: [3] }
+        meta: { title: '风险点记录', icon: 'jilu', roles: [3] }
       },
       {
         path: 'result',

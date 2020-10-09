@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="listQuery.loginName" placeholder="登陆账号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.department" placeholder="部门名称" clearable style="width: 200px" class="filter-item">
+      <el-select v-model="listQuery.department" placeholder="区县名称" clearable style="width: 200px" class="filter-item">
         <el-option v-for="item in departments" :key="item.depName" :label="item.depName" :value="item.depName" />
       </el-select>
       <el-date-picker
@@ -16,7 +16,7 @@
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
-      <el-button class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
+      <el-button :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
         下载
       </el-button>
     </div>
@@ -98,8 +98,9 @@
 </template>
 
 <script>
-import { departmentList, getMonthReport } from '../../../api/admin'
+import { departmentList, queryDistrictWritePage, queryDistrictWrite } from '../../../api/admin'
 import Pagination from '@/components/Pagination'
+import { parseTime2 } from '../../../utils'
 export default {
   name: 'Index',
   components: {
@@ -109,7 +110,17 @@ export default {
     return {
       tableKey: 1,
       total: 0,
-      departments: [],
+      departments: [
+        { depName: '邳州分公司' },
+        { depName: '新沂分公司' },
+        { depName: '丰县分公司' },
+        { depName: '沛县分公司' },
+        { depName: '贾汪分公司' },
+        { depName: '铜山县分公司' },
+        { depName: '睢宁县分公司' },
+        { depName: '市区公众营销中心' },
+        { depName: '市区政企营销中心' }
+      ],
       listQuery: {
         currentPage: 1,
         pageSize: 20,
@@ -118,24 +129,72 @@ export default {
         department: ''
       },
       listLoading: false,
-      list: []
+      list: [],
+      downloadLoading: false
     }
-  },
-  created() {
-    departmentList().then(res => {
-      if (res.errno === 0) {
-        this.departments = res.data.deplist
-      }
-    })
   },
   methods: {
     handleFilter() {
       this.listLoading = true
-      getMonthReport(this.listQuery).then(res => {
+      queryDistrictWritePage(this.listQuery).then(res => {
+        res.data.content.forEach(content => {
+          content.record.forEach(item => {
+            item.department = content.department
+          })
+        })
         this.list = res.data.content
         this.total = this.list.length
         this.listLoading = false
       })
+    },
+    handleDownload() {
+      if (this.listQuery.fillMonth === '') {
+        this.$notify.error({
+          title: '错误',
+          message: '请先选择月份'
+        })
+      } else {
+        this.downloadLoading = true
+        queryDistrictWrite(this.listQuery).then(res => {
+          const tmp = res.data
+          const result = []
+          for (let j = 0; j < tmp.length; j++) {
+            for (let i = 0; i < tmp[j].record.length; i++) {
+              result.push({
+                loginName: tmp[j].loginName,
+                name: tmp[j].name,
+                department: tmp[j].department,
+                id: tmp[j].record[i].id,
+                columnName: tmp[j].record[i].columnName,
+                content: tmp[j].record[i].content,
+                fillMonth: tmp[j].record[i].fillMonth,
+                fillTime: tmp[j].record[i].fillTime
+              })
+            }
+          }
+          import('@/vendor/Export2Excel').then(excel => {
+            const tHeader = ['id', '账号', '姓名', '部门', '列名称', '填写内容', '填写时间']
+            const filterVal = ['id', 'loginName', 'name', 'department', 'columnName', 'content', 'fillTime']
+            const data = this.formatJson(filterVal, result)
+            console.log(data, result)
+            excel.export_json_to_excel({
+              header: tHeader,
+              data,
+              filename: `${this.listQuery.fillMonth}-${this.listQuery.department}-${this.listQuery.loginName}-风险点填写记录`
+            })
+            this.downloadLoading = false
+          })
+        })
+      }
+    },
+    formatJson(filterVal, data) {
+      return data.map(v => filterVal.map(j => {
+        if (j === 'fillTime') {
+          return parseTime2(v[j])
+        } else {
+          return v[j]
+        }
+      }))
     }
   }
 }

@@ -13,7 +13,7 @@
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
-      <el-button class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
+      <el-button :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
         下载
       </el-button>
     </div>
@@ -97,9 +97,9 @@
 </template>
 
 <script>
-import { getDepartmentRecord, downloadSummaryTable } from '../../api/admin'
+import { getMyDepartmentPage, getMyDepartment } from '../../api/admin'
 import Pagination from '@/components/Pagination'
-
+import { parseTime2 } from '../../utils'
 export default {
   name: 'Index',
   components: {
@@ -117,24 +117,57 @@ export default {
         fillMonth: ''
       },
       listLoading: false,
-      list: []
+      list: [],
+      downloadLoading: false
     }
   },
   methods: {
     handleDownload() {
-      if (this.listQuery.fillMonth === '') {
-        this.$notify.error({
-          title: '错误',
-          message: '请先选择月份'
+      this.downloadLoading = true
+      getMyDepartment(this.listQuery).then(res => {
+        const tmp = res.data
+        const result = []
+        for (let j = 0; j < tmp.length; j++) {
+          for (let i = 0; i < tmp[j].record.length; i++) {
+            result.push({
+              loginName: tmp[j].loginName,
+              name: tmp[j].name,
+              department: tmp[j].department,
+              id: tmp[j].record[i].id,
+              columnName: tmp[j].record[i].columnName,
+              content: tmp[j].record[i].content,
+              fillMonth: tmp[j].record[i].fillMonth,
+              fillTime: tmp[j].record[i].fillTime
+            })
+          }
+        }
+        import('@/vendor/Export2Excel').then(excel => {
+          const tHeader = ['id', '账号', '姓名', '部门', '列名称', '填写内容', '填写时间']
+          const filterVal = ['id', 'loginName', 'name', 'department', 'columnName', 'content', 'fillTime']
+          const data = this.formatJson(filterVal, result)
+          console.log(data, result)
+          excel.export_json_to_excel({
+            header: tHeader,
+            data,
+            filename: `${this.listQuery.fillMonth ? this.listQuery.fillMonth : ''}-${this.listQuery.department ? this.listQuery.department : ''}-${this.listQuery.loginName ? this.listQuery.loginName : ''}-月报填写记录`
+          })
+          this.downloadLoading = false
         })
-      } else {
-        downloadSummaryTable({ fillMonth: this.listQuery.fillMonth })
-      }
+      })
+    },
+    formatJson(filterVal, data) {
+      return data.map(v => filterVal.map(j => {
+        if (j === 'fillTime') {
+          return parseTime2(v[j])
+        } else {
+          return v[j]
+        }
+      }))
     },
     handleFilter() {
       this.listLoading = true
-      getDepartmentRecord(this.listQuery).then(res => {
-        this.list = res.data
+      getMyDepartmentPage(this.listQuery).then(res => {
+        this.list = res.data.content
         this.total = this.list.length
         this.listLoading = false
       })
