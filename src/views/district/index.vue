@@ -90,7 +90,6 @@ export default {
       getWorkCode().then(res => {
         workCodes = res.data
         if (workCodes.includes(row.workId)) {
-          console.log(index)
           switch (index) {
             case 1:
               this.$router.push({

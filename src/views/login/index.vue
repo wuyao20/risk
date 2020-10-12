@@ -69,7 +69,7 @@ export default {
     }
     return {
       loginForm: {
-        username: this.$route.query.username ? this.$route.query.username : 'RZB000',
+        username: this.$route.query.username ? this.$route.query.username : 'SRL001',
         password: this.$route.query.password ? this.$route.query.password : '123456'
       },
       loginRules: {

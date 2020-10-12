@@ -98,7 +98,7 @@
 </template>
 
 <script>
-import { departmentList, queryDistrictWritePage, queryDistrictWrite } from '../../../api/admin'
+import { queryDistrictWritePage, queryDistrictWrite, getDepartColumnName, downloadNewDistrictMonth } from '../../../api/admin'
 import Pagination from '@/components/Pagination'
 import { parseTime2 } from '../../../utils'
 export default {
@@ -130,8 +130,19 @@ export default {
       },
       listLoading: false,
       list: [],
-      downloadLoading: false
+      downloadLoading: false,
+      columns: []
     }
+  },
+  created() {
+    getDepartColumnName().then(res => {
+      this.columns = res.data.map(item => {
+        return item.brandName
+      })
+      this.columns.unshift('姓名')
+      this.columns.unshift('部门')
+      this.columns.unshift('账号')
+    })
   },
   methods: {
     handleFilter() {
@@ -155,32 +166,63 @@ export default {
         })
       } else {
         this.downloadLoading = true
-        queryDistrictWrite(this.listQuery).then(res => {
-          const tmp = res.data
-          const result = []
-          for (let j = 0; j < tmp.length; j++) {
-            for (let i = 0; i < tmp[j].record.length; i++) {
-              result.push({
-                loginName: tmp[j].loginName,
-                name: tmp[j].name,
-                department: tmp[j].department,
-                id: tmp[j].record[i].id,
-                columnName: tmp[j].record[i].columnName,
-                content: tmp[j].record[i].content,
-                fillMonth: tmp[j].record[i].fillMonth,
-                fillTime: tmp[j].record[i].fillTime
-              })
-            }
-          }
+        // queryDepartWrite(this.listQuery).then(res => {
+        //   const tmp = res.data
+        //   const result = []
+        //   for (let j = 0; j < tmp.length; j++) {
+        //     for (let i = 0; i < tmp[j].record.length; i++) {
+        //       result.push({
+        //         loginName: tmp[j].loginName,
+        //         name: tmp[j].name,
+        //         department: tmp[j].department,
+        //         id: tmp[j].record[i].id,
+        //         columnName: tmp[j].record[i].columnName,
+        //         content: tmp[j].record[i].content,
+        //         fillMonth: tmp[j].record[i].fillMonth,
+        //         fillTime: tmp[j].record[i].fillTime
+        //       })
+        //     }
+        //   }
+        downloadNewDistrictMonth(this.listQuery).then(res => {
+          const result = res.data
           import('@/vendor/Export2Excel').then(excel => {
-            const tHeader = ['id', '账号', '姓名', '部门', '列名称', '填写内容', '填写时间']
-            const filterVal = ['id', 'loginName', 'name', 'department', 'columnName', 'content', 'fillTime']
+            const tHeader = this.columns
+            const filterVal = [
+              'loginName',
+              'department',
+              'name',
+              'columnName1',
+              'columnName2',
+              'columnName3',
+              'columnName4',
+              'columnName5',
+              'columnName6',
+              'columnName7',
+              'columnName8',
+              'columnName9',
+              'columnName10',
+              'columnName11',
+              'columnName12',
+              'columnName13',
+              'columnName14',
+              'columnName15',
+              'columnName16',
+              'columnName17',
+              'columnName18',
+              'columnName19',
+              'columnName20',
+              'columnName21',
+              'columnName22',
+              'columnName23',
+              'columnName24',
+              'columnName25',
+              'columnName26'
+            ]
             const data = this.formatJson(filterVal, result)
-            console.log(data, result)
             excel.export_json_to_excel({
               header: tHeader,
               data,
-              filename: `${this.listQuery.fillMonth}-${this.listQuery.department}-${this.listQuery.loginName}-风险点填写记录`
+              filename: `${this.listQuery.fillMonth}-${this.listQuery.department}-${this.listQuery.loginName}-区县月报记录`
             })
             this.downloadLoading = false
           })

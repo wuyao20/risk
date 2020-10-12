@@ -74,13 +74,13 @@ export const asyncRoutes = [
     component: Layout,
     redirect: '/department/index',
     name: 'department',
-    meta: { title: '部门', roles: [1] },
+    meta: { title: '部门', roles: [1, 4] },
     children: [
       {
         path: 'index',
         name: 'index',
         component: () => import('@/views/department/index'),
-        meta: { title: '部门主页', icon: 'table', roles: [1] }
+        meta: { title: '部门主页', icon: 'table', roles: [1, 4] }
       },
       {
         hidden: true,
@@ -88,7 +88,7 @@ export const asyncRoutes = [
         // ES2020语法 类似于require，动态导入组件
         component: () => import('@/views/department/task/index'),
         name: 'Statistics',
-        meta: { title: '考核统计表', roles: [1] }
+        meta: { title: '考核统计表', roles: [1, 4] }
       },
       {
         hidden: true,
@@ -96,7 +96,7 @@ export const asyncRoutes = [
         // ES2020语法 类似于require，动态导入组件
         component: () => import('@/views/department/monthReport/index'),
         name: 'monthReport',
-        meta: { title: '工作进展月报表', roles: [1] }
+        meta: { title: '工作进展月报表', roles: [1, 4] }
       }
     ]
   },
@@ -106,13 +106,13 @@ export const asyncRoutes = [
     component: Layout,
     redirect: '/district/index',
     name: 'district',
-    meta: { title: '区县', roles: [2] },
+    meta: { title: '区县', roles: [2, 5] },
     children: [
       {
         path: 'index',
         name: 'index',
         component: () => import('@/views/district/index'),
-        meta: { title: '区县主页', icon: 'form', roles: [2] }
+        meta: { title: '区县主页', icon: 'form', roles: [2, 5] }
       },
       {
         hidden: true,
@@ -120,7 +120,7 @@ export const asyncRoutes = [
         // ES2020语法 类似于require，动态导入组件
         component: () => import('@/views/district/monthReport/index'),
         name: 'report',
-        meta: { title: '区县月报', roles: [2] }
+        meta: { title: '区县月报', roles: [2, 5] }
       },
       {
         hidden: true,
@@ -128,7 +128,7 @@ export const asyncRoutes = [
         // ES2020语法 类似于require，动态导入组件
         component: () => import('@/views/department/task/index'),
         name: 'salted',
-        meta: { title: 'salted', roles: [2] }
+        meta: { title: 'salted', roles: [2, 5] }
       }
     ]
   },
@@ -189,7 +189,7 @@ export const asyncRoutes = [
   {
     path: '/result',
     component: Layout,
-    redirect: '/result/record/index',
+    redirect: '/result/record',
     name: 'admin',
     meta: { title: '结果汇总', icon: 'table', roles: [3] },
     children: [

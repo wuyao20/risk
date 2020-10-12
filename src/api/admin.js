@@ -205,3 +205,25 @@ export function getMyDepartmentPage(data) {
     data
   })
 }
+
+export function getDepartColumnName() {
+  return request({
+    url: '/resshow/allname',
+    method: 'get'
+  })
+}
+export function downloadNewDepartMonth(data) {
+  return request({
+    url: '/resshow/depallwriteexcel',
+    method: 'post',
+    data
+  })
+}
+
+export function downloadNewDistrictMonth(data) {
+  return request({
+    url: '/resshow/disallwriteexcel',
+    method: 'post',
+    data
+  })
+}

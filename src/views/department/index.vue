@@ -40,8 +40,8 @@
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center">
-        <template slot-scope="{row}">
-          <el-button type="primary" size="mini" @click="handleEdit(row)">
+        <template slot-scope="{row, $index}">
+          <el-button type="primary" size="mini" @click="handleEdit(row, $index + 1)">
             编辑
           </el-button>
           <el-button v-if="row.status!='published'" size="mini" type="success" @click="handleModifyStatus(row,'published')">
@@ -85,12 +85,12 @@ export default {
       }
       return ''
     },
-    handleEdit(row) {
+    handleEdit(row, index) {
       let workCodes = []
       getWorkCode().then(res => {
         workCodes = res.data
         if (workCodes.includes(row.workId)) {
-          switch (row.workId) {
+          switch (index) {
             case 1:
               this.$router.push({
                 path: `/department/statistics/${row.workId}`
