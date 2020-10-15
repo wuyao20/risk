@@ -170,19 +170,19 @@ export const asyncRoutes = [
     component: Layout,
     redirect: '/secadmin/index',
     name: 'secadmin',
-    meta: { title: '二级管理员', icon: 'user', roles: [4] },
+    meta: { title: '二级管理员', icon: 'user', roles: [4, 5] },
     children: [
       {
         path: 'index',
         name: 'index',
         component: () => import('@/views/secAdmin/index'),
-        meta: { title: '人员管理', icon: 'user', roles: [4] }
+        meta: { title: '人员管理', icon: 'user', roles: [4, 5] }
       },
       {
         path: 'authmanage',
         name: 'authmanage',
         component: () => import('@/views/secAdmin/authManage/index'),
-        meta: { title: '权限管理', icon: 'example', roles: [4] }
+        meta: { title: '权限管理', icon: 'example', roles: [4, 5] }
       }
     ]
   },
@@ -218,13 +218,25 @@ export const asyncRoutes = [
     component: Layout,
     redirect: '/secresult/index',
     name: 'admin',
-    meta: { title: '结果汇总', icon: 'table', roles: [4] },
+    meta: { title: '结果汇总', icon: 'table', roles: [4, 5] },
     children: [
       {
         path: 'index',
         name: 'index',
         component: () => import('@/views/secResult/index'),
-        meta: { title: '填写记录', icon: 'jilu', roles: [4] }
+        meta: { title: '填写记录', icon: 'jilu', roles: [4, 5] }
+      },
+      {
+        path: 'month',
+        name: 'month',
+        component: () => import('@/views/secResult/month/index'),
+        meta: { title: '部门月报记录', icon: 'jilu', roles: [4] }
+      },
+      {
+        path: 'month',
+        name: 'month',
+        component: () => import('@/views/secResult/month/district'),
+        meta: { title: '区县月报记录', icon: 'jilu', roles: [5] }
       }
     ]
   }

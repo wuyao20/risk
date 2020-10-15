@@ -93,12 +93,12 @@ export default {
           switch (index) {
             case 1:
               this.$router.push({
-                path: `/department/statistics/${row.workId}`
+                path: `/statistics/${row.workId}`
               })
               break
             case 2:
               this.$router.push({
-                path: `/department/monthReport/${row.workId}`
+                path: `/monthReport/${row.workId}`
               })
               break
             default: break

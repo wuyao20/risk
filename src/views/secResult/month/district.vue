@@ -2,9 +2,6 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="listQuery.loginName" placeholder="登陆账号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.department" placeholder="区县名称" clearable style="width: 200px" class="filter-item">
-        <el-option v-for="item in departments" :key="item.depName" :label="item.depName" :value="item.depName" />
-      </el-select>
       <el-date-picker
         v-model="listQuery.fillMonth"
         type="month"
@@ -98,9 +95,10 @@
 </template>
 
 <script>
-import { queryDistrictWritePage, queryDistrictWrite, getDepartColumnName, downloadNewDistrictMonth } from '../../../api/admin'
+import { queryDistrictWritePage, getDepartColumnName, downloadNewDistrictMonth } from '../../../api/admin'
 import Pagination from '@/components/Pagination'
 import { parseTime2 } from '../../../utils'
+import { mapGetters } from 'vuex'
 export default {
   name: 'Index',
   components: {
@@ -144,9 +142,13 @@ export default {
       this.columns.unshift('账号')
     })
   },
+  computed: {
+    ...mapGetters(['vuexDepartment'])
+  },
   methods: {
     handleFilter() {
       this.listLoading = true
+      this.listQuery.department = this.vuexDepartment
       queryDistrictWritePage(this.listQuery).then(res => {
         res.data.content.forEach(content => {
           content.record.forEach(item => {
@@ -183,6 +185,7 @@ export default {
         //       })
         //     }
         //   }
+        this.listQuery.department = this.vuexDepartment
         downloadNewDistrictMonth(this.listQuery).then(res => {
           const result = res.data
           import('@/vendor/Export2Excel').then(excel => {

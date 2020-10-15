@@ -101,6 +101,7 @@
 import { departmentList, getMonthReport, getDepartColumnName, downloadNewDepartMonth } from '../../../api/admin'
 import Pagination from '@/components/Pagination'
 import { parseTime2 } from '../../../utils'
+
 export default {
   name: 'Index',
   components: {
@@ -124,6 +125,7 @@ export default {
       columns: []
     }
   },
+
   created() {
     departmentList().then(res => {
       if (res.errno === 0) {
@@ -211,7 +213,9 @@ export default {
               'columnName23',
               'columnName24',
               'columnName25',
-              'columnName26'
+              'columnName26',
+              'columnName27',
+              'columnName28'
             ]
             const data = this.formatJson(filterVal, result)
             excel.export_json_to_excel({

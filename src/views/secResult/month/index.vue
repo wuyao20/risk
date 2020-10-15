@@ -2,9 +2,6 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="listQuery.loginName" placeholder="登陆账号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.department" placeholder="区县名称" clearable style="width: 200px" class="filter-item">
-        <el-option v-for="item in departments" :key="item.depName" :label="item.depName" :value="item.depName" />
-      </el-select>
       <el-date-picker
         v-model="listQuery.fillMonth"
         type="month"
@@ -98,9 +95,11 @@
 </template>
 
 <script>
-import { queryDistrictWritePage, queryDistrictWrite, getDepartColumnName, downloadNewDistrictMonth } from '../../../api/admin'
+
+import { departmentList, getMonthReport, getDepartColumnName, downloadNewDepartMonth } from '../../../api/admin'
 import Pagination from '@/components/Pagination'
 import { parseTime2 } from '../../../utils'
+import { mapGetters } from 'vuex'
 export default {
   name: 'Index',
   components: {
@@ -110,17 +109,7 @@ export default {
     return {
       tableKey: 1,
       total: 0,
-      departments: [
-        { depName: '邳州分公司' },
-        { depName: '新沂分公司' },
-        { depName: '丰县分公司' },
-        { depName: '沛县分公司' },
-        { depName: '贾汪分公司' },
-        { depName: '铜山县分公司' },
-        { depName: '睢宁县分公司' },
-        { depName: '市区公众营销中心' },
-        { depName: '市区政企营销中心' }
-      ],
+      departments: [],
       listQuery: {
         currentPage: 1,
         pageSize: 20,
@@ -134,7 +123,15 @@ export default {
       columns: []
     }
   },
+  computed: {
+    ...mapGetters(['vuexDepartment'])
+  },
   created() {
+    departmentList().then(res => {
+      if (res.errno === 0) {
+        this.departments = res.data.deplist
+      }
+    })
     getDepartColumnName().then(res => {
       this.columns = res.data.map(item => {
         return item.brandName
@@ -147,7 +144,8 @@ export default {
   methods: {
     handleFilter() {
       this.listLoading = true
-      queryDistrictWritePage(this.listQuery).then(res => {
+      this.listQuery.department = this.vuexDepartment
+      getMonthReport(this.listQuery).then(res => {
         res.data.content.forEach(content => {
           content.record.forEach(item => {
             item.department = content.department
@@ -165,7 +163,6 @@ export default {
           message: '请先选择月份'
         })
       } else {
-        this.downloadLoading = true
         // queryDepartWrite(this.listQuery).then(res => {
         //   const tmp = res.data
         //   const result = []
@@ -183,7 +180,10 @@ export default {
         //       })
         //     }
         //   }
-        downloadNewDistrictMonth(this.listQuery).then(res => {
+        this.downloadLoading = true
+        console.log(this.vuexDepartment)
+        this.listQuery.department = this.vuexDepartment
+        downloadNewDepartMonth(this.listQuery).then(res => {
           const result = res.data
           import('@/vendor/Export2Excel').then(excel => {
             const tHeader = this.columns
@@ -224,7 +224,7 @@ export default {
             excel.export_json_to_excel({
               header: tHeader,
               data,
-              filename: `${this.listQuery.fillMonth}-${this.listQuery.department}-${this.listQuery.loginName}-区县月报记录`
+              filename: `${this.listQuery.fillMonth}-${this.listQuery.department}-${this.listQuery.loginName}-部门月报填写记录`
             })
             this.downloadLoading = false
           })
@@ -244,6 +244,6 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 
 </style>
