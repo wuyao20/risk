@@ -149,21 +149,16 @@ export default {
         text-indent 2em
         text-align left
     .form
-      display flex
-      flex-direction row
-      flex-wrap wrap
-      justify-content space-between
-      padding 0 100px 0 100px
       .form-item
-        width 500px
         .label-title
           & >>> .el-form-item__label
             font-size 18px
             font-weight bold
           & >>> .el-textarea__inner
-            width 500px
             font-size 17px
-    .button-container
-      margin-top 10px
-      padding 0 100px 0 100px
+          .upload-demo
+            width 400px
+      .button-container
+        margin-top 10px
+        padding 0 100px 0 100px
 </style>

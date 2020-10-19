@@ -41,7 +41,7 @@
         </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登陆</el-button>
 
     </el-form>
   </div>
@@ -69,7 +69,7 @@ export default {
     }
     return {
       loginForm: {
-        username: this.$route.query.username ? this.$route.query.username : 'SRL001',
+        username: this.$route.query.username ? this.$route.query.username : 'JJZ000',
         password: this.$route.query.password ? this.$route.query.password : '123456'
       },
       loginRules: {

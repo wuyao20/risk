@@ -20,7 +20,7 @@
         下载
       </el-button>
       <el-button class="filter-item" type="primary" icon="el-icon-download" @click="handleAllDownload">
-        下载全部附件
+        下载附件
       </el-button>
     </div>
 
@@ -59,7 +59,7 @@
             </el-table-column>
             <el-table-column label="列名称" align="center">
               <template slot-scope="{row}">
-                <span>{{ row.columnName }}</span>
+                <span>{{ row.itemName }}</span>
               </template>
             </el-table-column>
             <el-table-column label="填写内容" align="center">
@@ -101,7 +101,7 @@
 </template>
 
 <script>
-import { departmentList, getRecord, getRecordNoPage } from '../../../api/admin'
+import { departmentList, getRecord, getRecordNoPage, getRiskColumnName } from '../../../api/admin'
 import { parseTime2 } from '../../../utils'
 import Pagination from '@/components/Pagination'
 import axios from 'axios'
@@ -124,13 +124,24 @@ export default {
       },
       listLoading: false,
       list: [],
-      downloadLoading: false
+      downloadLoading: false,
+      columns: []
     }
   },
   created() {
     departmentList().then(res => {
       if (res.errno === 0) {
         this.departments = res.data.deplist
+      }
+    })
+    getRiskColumnName().then(res => {
+      if (res.errno === 0) {
+        this.columns = res.data.map(item => {
+          return item.itemName
+        })
+        this.columns.unshift('姓名')
+        this.columns.unshift('部门')
+        this.columns.unshift('账号')
       }
     })
   },
@@ -142,29 +153,52 @@ export default {
           message: '请先选择月份'
         })
       } else {
-        this.downloadLoading = true
+        // this.downloadLoading = true
         getRecordNoPage(this.listQuery).then(res => {
-          const tmp = res.data
-          const result = []
-          for (let j = 0; j < tmp.length; j++) {
-            for (let i = 0; i < tmp[j].record.length; i++) {
-              result.push({
-                loginName: tmp[j].loginName,
-                name: tmp[j].name,
-                department: tmp[j].department,
-                id: tmp[j].record[i].id,
-                columnName: tmp[j].record[i].columnName,
-                content: tmp[j].record[i].content,
-                fillMonth: tmp[j].record[i].fillMonth,
-                fillTime: tmp[j].record[i].fillTime
-              })
-            }
-          }
+          const result = res.data
+          console.log(this.columns)
           import('@/vendor/Export2Excel').then(excel => {
-            const tHeader = ['id', '账号', '姓名', '部门', '列名称', '填写内容', '填写时间']
-            const filterVal = ['id', 'loginName', 'name', 'department', 'columnName', 'content', 'fillTime']
+            const tHeader = this.columns
+            const filterVal = [
+              'loginName',
+              'department',
+              'name',
+              'itemName1',
+              'itemName2',
+              'itemName3',
+              'itemName4',
+              'itemName5',
+              'itemName6',
+              'itemName7',
+              'itemName8',
+              'itemName9',
+              'itemName10',
+              'itemName11',
+              'itemName12',
+              'itemName13',
+              'itemName14',
+              'itemName15',
+              'itemName16',
+              'itemName17',
+              'itemName18',
+              'itemName19',
+              'itemName20',
+              'itemName21',
+              'itemName22',
+              'itemName23',
+              'itemName24',
+              'itemName25',
+              'itemName26',
+              'itemName27',
+              'itemName28',
+              'itemName29',
+              'itemName30',
+              'itemName31',
+              'itemName32',
+              'itemName33'
+            ]
             const data = this.formatJson(filterVal, result)
-            console.log(data, result)
+            // console.log(result, data, tHeader)
             excel.export_json_to_excel({
               header: tHeader,
               data,
@@ -191,17 +225,17 @@ export default {
           message: '请先选择月份'
         })
       } else {
-        axios.post('http://139.224.135.165:8080/risk/resshow/downlownd', { fillMonth: this.listQuery.fillMonth }, { responseType: 'blob' })
+        axios.post('http://139.224.135.165:8080/risk/resshow/downlownd', this.listQuery, { responseType: 'blob' })
           .then((res) => {
             const { data, headers } = res
-            const fileName = headers['content-disposition'].replace(/\w+;.+filename=(.*)/, '$1')
+            // const fileName = headers['content-disposition'].replace(/\w+;.+filename=(.*)/, '$1')
             // 此处当返回json文件时需要先对data进行JSON.stringify处理，其他类型文件不用做处理
             // const blob = new Blob([JSON.stringify(data)], ...)
             const blob = new Blob([data], { type: headers['content-type'] })
             const dom = document.createElement('a')
             const url = window.URL.createObjectURL(blob)
             dom.href = url
-            dom.download = decodeURI(fileName)
+            dom.download = decodeURI(`${this.listQuery.fillMonth}-${this.listQuery.department}-${this.listQuery.loginName}-风险点附件汇总.zip`)
             dom.style.display = 'none'
             document.body.appendChild(dom)
             dom.click()

@@ -89,16 +89,12 @@ export default {
       let workCodes = []
       getWorkCode().then(res => {
         workCodes = res.data
+        console.log(workCodes, row.workId)
         if (workCodes.includes(row.workId)) {
           switch (index) {
             case 1:
               this.$router.push({
-                path: `/report/${row.workId}`
-              })
-              break
-            case 2:
-              this.$router.push({
-                path: `/statistics/${row.workId}`
+                path: `/district/report/${row.workId}`
               })
               break
             default: break

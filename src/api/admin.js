@@ -64,7 +64,7 @@ export function getRecord(data) {
 
 export function getRecordNoPage(data) {
   return request({
-    url: '/resshow/allfill',
+    url: '/resshow/allfillexcel',
     method: 'post',
     data
   })
@@ -225,5 +225,12 @@ export function downloadNewDistrictMonth(data) {
     url: '/resshow/disallwriteexcel',
     method: 'post',
     data
+  })
+}
+
+export function getRiskColumnName() {
+  return request({
+    url: '/resshow/eventname',
+    method: 'get'
   })
 }
