@@ -41,12 +41,18 @@
       </el-table-column>
       <el-table-column label="备注" align="center">
         <template slot-scope="{row, $index}">
-          <el-button type="primary" size="mini" @click="handleEdit(row, $index + 1)">
-            编辑
-          </el-button>
-          <el-button v-if="row.status!='published'" size="mini" type="success" @click="handleModifyStatus(row,'published')">
-            上传
-          </el-button>
+          <div class="button-container">
+            <div>
+              <el-button type="primary" size="mini" @click="handleEdit(row, $index + 1)">
+                编辑
+              </el-button>
+            </div>
+            <div>
+              <el-button size="mini" type="success" @click="handleModifyStatus(row)">
+                上传
+              </el-button>
+            </div>
+          </div>
         </template>
       </el-table-column>
     </el-table>
@@ -94,7 +100,7 @@ export default {
           switch (index) {
             case 1:
               this.$router.push({
-                path: `/department/statistics/${row.workId}`
+                path: `/department/summary/${row.workId}`
               })
               break
             case 2:
@@ -126,4 +132,11 @@ export default {
         line-height 46px
         margin-bottom 8px
         font-weight bold
+      .table
+        .button-container
+          margin 5px auto
+          display grid
+          grid-template-columns 100%
+          grid-template-rows 1fr 1fr
+          grid-row-gap 10px
 </style>

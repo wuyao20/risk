@@ -55,108 +55,41 @@ export const constantRoutes = [
         component: () => import('@/views/dashboard/homepage'),
         meta: { title: '主页', icon: 'dashboard' }
       }
-      // {
-      //   path: 'result',
-      //   name: 'result',
-      //   component: () => import('@/views/dashboard/month/index'),
-      //   meta: { title: '月报填写记录', icon: 'nested' }
-      // }
     ]
   },
-
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
 
 export const asyncRoutes = [
-  // {
-  //   path: '/company',
-  //   component: Layout,
-  //   redirect: '/company/department',
-  //   name: 'company',
-  //   meta: { title: '公司', icon: 'dashboard', roles: [1, 2, 3, 4, 5] },
-  //   children: [
-  //     {
-  //       path: 'department',
-  //       name: 'department',
-  //       redirect: '/department/index',
-  //       meta: { title: '部门', roles: [1, 4] },
-  //       children: [
-  //         {
-  //           path: 'index',
-  //           name: 'index',
-  //           component: () => import('@/views/department/index'),
-  //           meta: { title: '部门主页', icon: 'table', roles: [1, 4] }
-  //         },
-  //         {
-  //           hidden: true,
-  //           path: 'statistics/:workId',
-  //           // ES2020语法 类似于require，动态导入组件
-  //           component: () => import('@/views/department/task/index'),
-  //           name: 'Statistics',
-  //           meta: { title: '考核统计表', roles: [1, 4] }
-  //         },
-  //         {
-  //           hidden: true,
-  //           path: 'monthReport/:workId',
-  //           // ES2020语法 类似于require，动态导入组件
-  //           component: () => import('@/views/department/monthReport/index'),
-  //           name: 'monthReport',
-  //           meta: { title: '工作进展月报表', roles: [1, 4] }
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       path: 'district',
-  //       name: 'district',
-  //       meta: { title: '区县', roles: [2, 5] },
-  //       children: [
-  //         {
-  //           path: 'index',
-  //           name: 'index',
-  //           component: () => import('@/views/district/index'),
-  //           meta: { title: '区县主页', icon: 'form', roles: [2, 5] }
-  //         },
-  //         {
-  //           hidden: true,
-  //           path: 'report/:workId',
-  //           // ES2020语法 类似于require，动态导入组件
-  //           component: () => import('@/views/district/monthReport/index'),
-  //           name: 'report',
-  //           meta: { title: '区县月报', roles: [2, 5] }
-  //         },
-  //         {
-  //           hidden: true,
-  //           path: 'salted',
-  //           // ES2020语法 类似于require，动态导入组件
-  //           component: () => import('@/views/department/task/index'),
-  //           name: 'salted',
-  //           meta: { title: 'salted', roles: [2, 5] }
-  //         }
-  //       ]
-  //     }
-  //   ]
-  // },
+  // 部门主页
   {
     path: '/department',
     component: Layout,
     redirect: '/department/index',
     name: 'department',
-    meta: { title: '部门', roles: [1, 4] },
+    meta: { title: '部门', roles: [1, 4, 6] },
     children: [
       {
         path: 'index',
         name: 'index',
         component: () => import('@/views/department/index'),
-        meta: { title: '部门主页', icon: 'table', roles: [1, 4] }
+        meta: { title: '部门主页', icon: 'table', roles: [1, 4, 6] }
       },
       {
         hidden: true,
-        path: 'statistics/:workId',
+        path: 'summary/:workId',
+        name: 'summary',
+        component: () => import('@/views/department/summary/index'),
+        meta: { title: '风险点明细', icon: 'table', roles: [6] }
+      },
+      {
+        hidden: true,
+        path: 'statistics/:riskname',
         // ES2020语法 类似于require，动态导入组件
         component: () => import('@/views/department/task/index'),
         name: 'Statistics',
-        meta: { title: '考核统计表', roles: [1, 4] }
+        meta: { title: '考核统计表', roles: [1, 4, 6] }
       },
       {
         hidden: true,
@@ -164,11 +97,12 @@ export const asyncRoutes = [
         // ES2020语法 类似于require，动态导入组件
         component: () => import('@/views/department/monthReport/index'),
         name: 'monthReport',
-        meta: { title: '工作进展月报表', roles: [1, 4] }
+        meta: { title: '工作进展月报表', roles: [1, 4, 6] }
       }
     ]
   },
 
+  // 区县主页
   {
     path: '/district',
     component: Layout,
@@ -309,23 +243,44 @@ export const asyncRoutes = [
     ]
   },
   {
+    path: '/halfyear',
+    component: Layout,
+    redirect: '/halfyear/department',
+    name: 'halfyear',
+    meta: { title: '半年检查表', icon: 'table', roles: [4, 5] },
+    children: [
+      {
+        path: 'department',
+        name: 'department',
+        component: () => import('@/views/halfyear/department'),
+        meta: { title: '部门半年表', icon: 'table', roles: [4] }
+      },
+      {
+        path: 'district',
+        name: 'district',
+        component: () => import('@/views/halfyear/district'),
+        meta: { title: '区县半年表', icon: 'table', roles: [5] }
+      }
+    ]
+  },
+  {
     path: '/myrecord',
     component: Layout,
     redirect: '/myrecord/index',
     name: 'myrecord',
-    meta: { title: '记录', icon: 'table', roles: [1, 2] },
+    meta: { title: '记录', icon: 'table', roles: [1, 2, 6] },
     children: [
       {
         path: 'index',
         name: 'index',
         component: () => import('@/views/dashboard/index'),
-        meta: { title: '风险点填写记录', icon: 'dashboard', roles: [1] }
+        meta: { title: '风险点填写记录', icon: 'dashboard', roles: [1, 6] }
       },
       {
         path: 'result',
         name: 'result',
         component: () => import('@/views/dashboard/month/index'),
-        meta: { title: '月报填写记录', icon: 'nested', roles: [1, 2] }
+        meta: { title: '月报填写记录', icon: 'nested', roles: [1, 2, 6] }
       }
     ]
   }

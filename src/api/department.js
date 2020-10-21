@@ -10,7 +10,7 @@ export function chooseWork(data) {
 
 export function getStatisticsItems(data) {
   return request({
-    url: '/examine/mark',
+    url: '/userrisk/getonedetail',
     method: 'post',
     data
   })
@@ -25,7 +25,7 @@ export function getWorkCode() {
 
 export function fillrecord(data) {
   return request({
-    url: '/examine/fillrecord',
+    url: '/examine/riskrecord',
     method: 'post',
     data
   })

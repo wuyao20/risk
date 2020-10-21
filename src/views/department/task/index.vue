@@ -76,7 +76,7 @@ export default {
     }
   },
   created() {
-    getStatisticsItems({ workCode: this.$route.params.workId }).then(res => {
+    getStatisticsItems({ riskName: this.$route.params.riskname }).then(res => {
       this.resList = res.data.map(item => {
         item.content = item.originalContent
         return item
@@ -103,9 +103,10 @@ export default {
         temArr[temArr.length - 1].content = this.fileList[0].url
       }
       const uploadData = {
-        loginName: this.resList[0].loginName,
-        gridCode: this.resList[0].gridCode,
-        workCode: this.resList[0].workCode,
+        // loginName: this.resList[0].loginName,
+        // gridCode: this.resList[0].gridCode,
+        // workCode: this.resList[0].workCode,
+        riskName: this.$route.params.riskname,
         fillMonth: this.fullDate,
         fillDetailList: temArr
       }

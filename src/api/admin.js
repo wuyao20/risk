@@ -234,3 +234,25 @@ export function getRiskColumnName() {
     method: 'get'
   })
 }
+
+export function getRiskSummary(data) {
+  return request({
+    url: '/userrisk/getriskdetails',
+    method: 'post',
+    data
+  })
+}
+export function halfyear(data) {
+  return request({
+    url: '/examine/check',
+    method: 'post',
+    data
+  })
+}
+export function departmentUploadHalfyear(data) {
+  return request({
+    url: '/examine/checkrecord',
+    method: 'post',
+    data
+  })
+}

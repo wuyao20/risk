@@ -54,6 +54,9 @@ export default {
         case 5:
           result = '区县二级管理员'
           break
+        case 6:
+          result = '部门三级管理员'
+          break
         default:
           result = ''
       }

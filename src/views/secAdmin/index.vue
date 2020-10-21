@@ -164,7 +164,7 @@ export default {
       disableInput: true,
       temp: {},
       dialogAddFormVisible: false,
-      department: 1,
+      department: 6,
       district: 2,
       admin: 3,
       secondaryAdmin: 4,
@@ -176,7 +176,7 @@ export default {
         loginName: '',
         name: '',
         department: '',
-        enableFlage2: 1
+        enableFlage2: 6
       },
       total: 0,
       list: [],
