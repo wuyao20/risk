@@ -47,7 +47,6 @@ export const constantRoutes = [
     path: '/',
     component: Layout,
     redirect: '/dashboard',
-    meta: { title: '主页', icon: 'dashboard' },
     children: [
       {
         path: 'dashboard',
@@ -151,7 +150,7 @@ export const asyncRoutes = [
         path: 'summary',
         name: 'summary',
         component: () => import('@/views/admin/summary/index'),
-        meta: { title: '风险点管理', icon: 'example', roles: [3] }
+        meta: { title: '风险点列名管理', icon: 'example', roles: [3] }
       },
       {
         path: 'authority',
@@ -164,6 +163,12 @@ export const asyncRoutes = [
         name: 'depauthority',
         component: () => import('@/views/admin/depAuthority/index'),
         meta: { title: '部门权限管理', icon: 'password', roles: [3] }
+      },
+      {
+        path: 'risk',
+        name: 'risk',
+        component: () => import('@/views/admin/risk/risk'),
+        meta: { title: '风险点管理', icon: 'password', roles: [3] }
       }
     ]
   },
@@ -180,11 +185,17 @@ export const asyncRoutes = [
         component: () => import('@/views/secAdmin/index'),
         meta: { title: '人员管理', icon: 'user', roles: [4, 5] }
       },
+      // {
+      //   path: 'authmanage',
+      //   name: 'authmanage',
+      //   component: () => import('@/views/secAdmin/authManage/index'),
+      //   meta: { title: '权限管理', icon: 'example', roles: [4, 5] }
+      // },
       {
-        path: 'authmanage',
-        name: 'authmanage',
-        component: () => import('@/views/secAdmin/authManage/index'),
-        meta: { title: '权限管理', icon: 'example', roles: [4, 5] }
+        path: 'risk',
+        name: 'risk',
+        component: () => import('@/views/secAdmin/risk/risk'),
+        meta: { title: '风险点管理', icon: 'example', roles: [4] }
       }
     ]
   },
@@ -213,6 +224,18 @@ export const asyncRoutes = [
         component: () => import('@/views/result/month/district'),
         meta: { title: '区县月报', icon: 'nested', roles: [3] }
       }
+      // {
+      //   path: 'departmenthalfyear',
+      //   name: 'departmenthalfyear',
+      //   component: () => import('@/views/result/halfyear/department'),
+      //   meta: { title: '部门半年检查表', icon: 'nested', roles: [3] }
+      // },
+      // {
+      //   path: 'districthalfyear',
+      //   name: 'districthalfyear',
+      //   component: () => import('@/views/result/halfyear/district'),
+      //   meta: { title: '区县半年检查表', icon: 'nested', roles: [3] }
+      // }
     ]
   },
   {
@@ -226,43 +249,43 @@ export const asyncRoutes = [
         path: 'index',
         name: 'index',
         component: () => import('@/views/secResult/index'),
-        meta: { title: '风险点填写记录', icon: 'jilu', roles: [4, 5] }
+        meta: { title: '1、各风险点填写记录', roles: [4, 5] }
       },
       {
         path: 'month',
         name: 'month',
         component: () => import('@/views/secResult/month/index'),
-        meta: { title: '部门月报记录', icon: 'jilu', roles: [4] }
+        meta: { title: '2、部门月报记录', roles: [4] }
       },
       {
         path: 'month',
         name: 'month',
         component: () => import('@/views/secResult/month/district'),
-        meta: { title: '区县月报记录', icon: 'jilu', roles: [5] }
+        meta: { title: '2、区县月报记录', roles: [5] }
       }
     ]
   },
-  {
-    path: '/halfyear',
-    component: Layout,
-    redirect: '/halfyear/department',
-    name: 'halfyear',
-    meta: { title: '半年检查表', icon: 'table', roles: [4, 5] },
-    children: [
-      {
-        path: 'department',
-        name: 'department',
-        component: () => import('@/views/halfyear/department'),
-        meta: { title: '部门半年表', icon: 'table', roles: [4] }
-      },
-      {
-        path: 'district',
-        name: 'district',
-        component: () => import('@/views/halfyear/district'),
-        meta: { title: '区县半年表', icon: 'table', roles: [5] }
-      }
-    ]
-  },
+  // {
+  //   path: '/halfyear',
+  //   component: Layout,
+  //   redirect: '/halfyear/department',
+  //   name: 'halfyear',
+  //   meta: { title: '半年检查表', icon: 'table', roles: [4, 5] },
+  //   children: [
+  //     {
+  //       path: 'department',
+  //       name: 'department',
+  //       component: () => import('@/views/halfyear/department'),
+  //       meta: { title: '部门半年检查表', icon: 'table', roles: [4] }
+  //     },
+  //     {
+  //       path: 'district',
+  //       name: 'district',
+  //       component: () => import('@/views/halfyear/district'),
+  //       meta: { title: '区县半年检查表', icon: 'table', roles: [5] }
+  //     }
+  //   ]
+  // },
   {
     path: '/myrecord',
     component: Layout,
@@ -273,15 +296,22 @@ export const asyncRoutes = [
       {
         path: 'index',
         name: 'index',
-        component: () => import('@/views/dashboard/index'),
+        component: () => import('@/views/dashboard/myrecord'),
         meta: { title: '风险点填写记录', icon: 'dashboard', roles: [1, 6] }
       },
       {
+        hidden: true,
         path: 'result',
         name: 'result',
-        component: () => import('@/views/dashboard/month/index'),
-        meta: { title: '月报填写记录', icon: 'nested', roles: [1, 2, 6] }
+        component: () => import('@/views/dashboard/result'),
+        meta: { title: '风险点填写记录', icon: 'dashboard', roles: [1, 6] }
       }
+      // {
+      //   path: 'result',
+      //   name: 'result',
+      //   component: () => import('@/views/dashboard/month/index'),
+      //   meta: { title: '月报填写记录', icon: 'nested', roles: [1, 2, 6] }
+      // }
     ]
   }
 ]

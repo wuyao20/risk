@@ -25,6 +25,91 @@
     </div>
 
     <el-table
+      v-if="tableShow"
+      :data="newList"
+      border
+      fit
+      highlight-current-row
+      style="width: 100%;"
+    >
+      <el-table-column label="ID" align="center">
+        <template slot-scope="{$index}">
+          <span>{{ $index + 1 }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="newColumns[0]" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.loginName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="newColumns[1]" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.department }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="newColumns[2]" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="newColumns[3]" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.itemName23 }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="newColumns[4]" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.itemName24 }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="newColumns[5]" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.itemName25 }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="newColumns[6]" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.itemName26 }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="newColumns[7]" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.itemName27 }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="newColumns[8]" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.itemName28 }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="newColumns[9]" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.itemName29 }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="newColumns[10]" align="center">
+        <template slot-scope="scope">
+          <el-link :href="scope.row.itemName30" icon="el-icon-download">附件</el-link>
+        </template>
+      </el-table-column>
+      <el-table-column :label="newColumns[11]" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.itemName31 }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="newColumns[12]" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.itemName32 }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column :label="newColumns[13]" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.itemName33 }}</span>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <!-- <el-table
       :data="list"
       border
       fit
@@ -95,14 +180,15 @@
           <span>{{ row.department }}</span>
         </template>
       </el-table-column>
-    </el-table>
+    </el-table> -->
+
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.currentPage" :limit.sync="listQuery.pageSize" @pagination="handleFilter" />
   </div>
 </template>
 
 <script>
-import { departmentList, getRecord, getRecordNoPage, getRiskColumnName } from '../../../api/admin'
-import { parseTime2 } from '../../../utils'
+import { newAdminGetRiskData, newGetRiskColumns, departmentList, getRecordNoPage, getRiskColumnName } from '../../../api/admin'
+import { parseTime2, getCurrentMonth } from '../../../utils'
 import Pagination from '@/components/Pagination'
 import axios from 'axios'
 export default {
@@ -112,6 +198,7 @@ export default {
   },
   data() {
     return {
+      tableShow: false,
       tableKey: 1,
       total: 0,
       departments: [],
@@ -125,10 +212,25 @@ export default {
       listLoading: false,
       list: [],
       downloadLoading: false,
-      columns: []
+      columns: [],
+      newColumns: [],
+      newList: []
     }
   },
   created() {
+    this.listQuery.fillMonth = getCurrentMonth()
+    newGetRiskColumns().then(res => {
+      if (res.errno === 0) {
+        this.newColumns = res.data.map(item => {
+          return item.itemName
+        })
+        this.newColumns.unshift('姓名')
+        this.newColumns.unshift('部门')
+        this.newColumns.unshift('账号')
+        this.tableShow = true
+      }
+      console.log(this.newColumns)
+    })
     departmentList().then(res => {
       if (res.errno === 0) {
         this.departments = res.data.deplist
@@ -246,9 +348,9 @@ export default {
     },
     handleFilter() {
       this.listLoading = true
-      getRecord(this.listQuery).then(res => {
-        this.list = res.data.content
-        this.total = this.list.length
+      newAdminGetRiskData(this.listQuery).then(res => {
+        this.newList = res.data.content
+        this.total = this.newList.length
         this.listLoading = false
       })
     }

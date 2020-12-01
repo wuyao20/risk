@@ -3,13 +3,13 @@
     <div class="filter-container">
       <el-input v-model="listQuery.loginName" placeholder="登陆账号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.name" placeholder="姓名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <div class="filter-item" style="margin-left: 5px;margin-right: 5px;">
+      <!-- <div class="filter-item" style="margin-left: 5px;margin-right: 5px;">
         <el-radio-group v-model="listQuery.enableFlage2" size="medium">
           <el-radio-button :label="department" border>部门三级管理员</el-radio-button>
           <el-radio-button :label="district" border>区县三级管理员</el-radio-button>
           <el-radio-button :label="secondaryAdmin" border>二级管理员</el-radio-button>
         </el-radio-group>
-      </div>
+      </div> -->
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
@@ -36,11 +36,6 @@
           <span>{{ row.loginName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="密码" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.password }}</span>
-        </template>
-      </el-table-column>
       <el-table-column label="姓名" align="center">
         <template slot-scope="{row}">
           <span>{{ row.name }}</span>
@@ -51,14 +46,9 @@
           <span>{{ row.department }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="公司" align="center">
+      <el-table-column label="风险点" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.company }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="归属部门/区县" align="center">
-        <template slot-scope="{row}">
-          <span>{{ calcRoles(row.enableFlage2) }}</span>
+          <span>{{ row.riskNames.toString() }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="300px">
@@ -69,6 +59,9 @@
           <el-button type="success" size="mini" @click="handleSign(row)">
             登陆
           </el-button>
+          <el-button type="warning" size="mini" @click="handleRisk(row)">
+            权限
+          </el-button>
           <el-button size="mini" type="danger" @click="handleDelete(row)">
             删除
           </el-button>
@@ -78,7 +71,7 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="handleFilter" />
 
     <el-dialog title="添加用户" :visible.sync="dialogAddFormVisible" modal width="60%">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="120px" style="width: 70%; margin-left:50px;">
+      <el-form ref="dataForm" :model="temp" label-position="left" label-width="120px" style="width: 70%; margin-left:50px;">
         <el-form-item label="账号" prop="loginName">
           <el-input v-model="temp.loginName" />
         </el-form-item>
@@ -90,16 +83,6 @@
         </el-form-item>
         <el-form-item label="部门" prop="department">
           <el-input v-model="temp.department" :disabled="disableInput" />
-        </el-form-item>
-        <el-form-item label="公司" prop="company">
-          <el-input v-model="temp.company" />
-        </el-form-item>
-        <el-form-item label="归属部门/区县" prop="enableFlage2">
-          <el-radio-group v-model="temp.enableFlage2" size="medium">
-            <el-radio-button :label="department" border>部门三级管理员</el-radio-button>
-            <el-radio-button :label="district" border>区县三级管理员</el-radio-button>
-            <el-radio-button :label="secondaryAdmin" border>二级管理员</el-radio-button>
-          </el-radio-group>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -126,7 +109,7 @@
         <el-form-item label="部门" prop="department">
           <el-input v-model="temp.department" :disabled="disableInput" />
         </el-form-item>
-        <el-form-item label="公司" prop="company">
+        <!-- <el-form-item label="公司" prop="company">
           <el-input v-model="temp.company" />
         </el-form-item>
         <el-form-item label="归属部门/区县" prop="enableFlage2">
@@ -135,7 +118,7 @@
             <el-radio-button :label="district" border>区县三级管理员</el-radio-button>
             <el-radio-button :label="secondaryAdmin" border>二级管理员</el-radio-button>
           </el-radio-group>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
@@ -146,11 +129,80 @@
         </el-button>
       </div>
     </el-dialog>
+
+    <el-dialog title="风险点赋权" :visible.sync="dialogRiskVisible" modal width="90%">
+      <el-table
+        ref="riskMultipleTable"
+        :data="risks"
+        tooltip-effect="dark"
+        style="width: 100%"
+        fit
+        border
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column
+          type="selection"
+          width="55"
+        />
+        <el-table-column
+          label="责任（牵头）部门"
+          width="120"
+        >
+          <template slot-scope="scope">
+            {{ scope.row.line1 }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="name"
+          label="责任人"
+          width="120"
+        >
+          <template slot-scope="scope">
+            {{ scope.row.line2 }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="address"
+          label="业务事项描述"
+          show-overflow-tooltip
+        >
+          <template slot-scope="scope">
+            {{ scope.row.line3 }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="address"
+          label="廉洁风险点"
+          show-overflow-tooltip
+        >
+          <template slot-scope="scope">
+            {{ scope.row.line4 }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="address"
+          label="徐州分公司细化的防控措施"
+          show-overflow-tooltip
+        >
+          <template slot-scope="scope">
+            {{ scope.row.line5 }}
+          </template>
+        </el-table-column>
+      </el-table>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogRiskVisible = false">
+          取消
+        </el-button>
+        <el-button type="primary" @click="updateRisk">
+          确认
+        </el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { secAdminGetUserPage, updateUser, deleteUser, addUser } from '../../api/admin'
+import { secUpdateRisks, secAdminGetUserPage, updateUser, deleteUser, addUser, getUserPassword, getAllRisks } from '../../api/admin'
 import { mapGetters } from 'vuex'
 import Pagination from '@/components/Pagination'
 export default {
@@ -160,9 +212,18 @@ export default {
   },
   data() {
     return {
+      temArr: [],
+      risksTmp: {},
+      dialogRiskVisible: false,
+      risks: [],
       dialogFormVisible: false,
       disableInput: true,
-      temp: {},
+      temp: {
+        loginName: '',
+        name: '',
+        department: '',
+        password: ''
+      },
       dialogAddFormVisible: false,
       department: 6,
       district: 2,
@@ -197,11 +258,62 @@ export default {
     ])
   },
   created() {
+    getAllRisks({ department: this.vuexDepartment }).then(res => {
+      this.risks = res.data
+    })
   },
   methods: {
+    handleRisk(row) {
+      this.temArr = []
+      const roles = row.riskNames
+      this.temArr = this.risks.map(risk => {
+        if (roles.indexOf(risk.riskName) !== -1) {
+          return risk
+        }
+      }).filter(item => item !== undefined)
+      this.risksTmp = row
+      this.risksTmp.selected = this.temArr
+      this.dialogRiskVisible = true
+      const that = this
+      setTimeout(() => {
+        if (that.temArr) {
+          that.temArr.forEach(row => {
+            that.$refs['riskMultipleTable'].toggleRowSelection(row)
+          })
+        } else {
+          that.$refs['riskMultipleTable'].clearSelection()
+        }
+      }, 300)
+    },
+    handleSelectionChange(val) {
+      this.risksTmp.selected = val
+    },
+    updateRisk() {
+      this.risksTmp.riskNames = this.risksTmp.selected.map(item => {
+        return item.riskName
+      })
+      secUpdateRisks(this.risksTmp).then(res => {
+        const { errno, data } = res
+        if (errno === 0) {
+          this.$notify.success({
+            title: '成功',
+            message: data
+          })
+        } else {
+          this.$notify.error({
+            title: '失败',
+            message: '赋权失败，请刷新重试'
+          })
+        }
+        this.dialogRiskVisible = false
+      })
+    },
     async handleSign(row) {
       await this.$store.dispatch('user/logout')
-      this.$router.push({ path: `/login?username=${row.loginName}&password=${row.password}` })
+      getUserPassword({ loginName: row.loginName }).then(res => {
+        const password = res.data.password
+        this.$router.push({ path: `/login?username=${row.loginName}&password=${password}` })
+      })
     },
     async logout() {
       await this.$store.dispatch('user/logout')
@@ -223,9 +335,10 @@ export default {
     },
     handleFilter() {
       this.listLoading = true
+      this.listQuery.department = this.vuexDepartment
       secAdminGetUserPage(this.listQuery).then(res => {
-        this.list = res.data.users.list
-        this.total = res.data.users.total
+        this.list = res.data.content
+        this.total = res.data.recordTotal
         this.listLoading = false
       })
     },
@@ -266,6 +379,7 @@ export default {
       })
     },
     createData() {
+      this.temp.riskNames = []
       addUser(this.temp).then(res => {
         const { errno, data } = res
         if (errno === 0) {
@@ -284,7 +398,7 @@ export default {
       })
     },
     handleDelete(row) {
-      deleteUser({ userId: row.userId }).then(res => {
+      deleteUser({ loginName: row.loginName }).then(res => {
         const { errno, data } = res
         if (errno === 0) {
           this.$notify.success({

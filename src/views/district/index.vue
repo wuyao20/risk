@@ -44,9 +44,9 @@
           <el-button type="primary" size="mini" @click="handleEdit(row, $index + 1)">
             编辑
           </el-button>
-          <el-button v-if="row.status!='published'" size="mini" type="success" @click="handleModifyStatus(row,'published')">
+          <!-- <el-button v-if="row.status!='published'" size="mini" type="success" @click="handleModifyStatus(row,'published')">
             上传
-          </el-button>
+          </el-button> -->
         </template>
       </el-table-column>
     </el-table>

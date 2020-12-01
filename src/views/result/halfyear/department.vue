@@ -1,7 +1,9 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.loginName" placeholder="登陆账号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-select v-model="listQuery.department" placeholder="部门名称" clearable style="width: 200px" class="filter-item">
+        <el-option v-for="item in departments" :key="item.depName" :label="item.depName" :value="item.depName" />
+      </el-select>
       <el-date-picker
         v-model="listQuery.fillMonth"
         type="month"
@@ -16,8 +18,10 @@
       <el-button :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
         下载
       </el-button>
+      <el-button :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleAllDownload">
+        下载全部附件
+      </el-button>
     </div>
-
     <el-table
       :data="list"
       border
@@ -53,7 +57,7 @@
             </el-table-column>
             <el-table-column label="列名称" align="center">
               <template slot-scope="{row}">
-                <span>{{ row.columnName }}</span>
+                <span>{{ row.spotName }}</span>
               </template>
             </el-table-column>
             <el-table-column label="填写内容" align="center">
@@ -63,7 +67,7 @@
             </el-table-column>
             <el-table-column label="填写时间" align="center" width="100">
               <template slot-scope="{row}">
-                <span>{{ row.fillTime?row.fillTime.substring(0, 10):'无填写记录' }}</span>
+                <span>{{ row.fillTime.substring(0, 10) }}</span>
               </template>
             </el-table-column>
           </el-table>
@@ -74,7 +78,7 @@
           <span>{{ $index+1 }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="风险点" align="center">
+      <el-table-column label="账号" align="center">
         <template slot-scope="{row}">
           <span>{{ row.loginName }}</span>
         </template>
@@ -90,17 +94,16 @@
         </template>
       </el-table-column>
     </el-table>
-
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.currentPage" :limit.sync="listQuery.pageSize" @pagination="handleFilter" />
 
   </div>
 </template>
 
 <script>
-import { getRecordNoPage, getMyDepartmentPage, getRiskColumnName } from '../../api/admin'
+import { departmentList, halfyearDepartmentResult, halfyearDepartmentColumns, halfyearDepartmentExcel } from '../../../api/admin'
 import Pagination from '@/components/Pagination'
-import { parseTime2 } from '../../utils'
-import { mapGetters } from 'vuex'
+import { parseTime2 } from '../../../utils'
+import axios from 'axios'
 export default {
   name: 'Index',
   components: {
@@ -114,7 +117,6 @@ export default {
       listQuery: {
         currentPage: 1,
         pageSize: 20,
-        loginName: '',
         fillMonth: '',
         department: ''
       },
@@ -124,43 +126,71 @@ export default {
       columns: []
     }
   },
-  computed: {
-    ...mapGetters([
-      'vuexDepartment'
-    ])
-  },
+
   created() {
-    getRiskColumnName().then(res => {
+    departmentList().then(res => {
       if (res.errno === 0) {
-        this.columns = res.data.map(item => {
-          return item.itemName
-        })
-        this.columns.unshift('姓名')
-        this.columns.unshift('部门')
-        this.columns.unshift('账号')
+        this.departments = res.data.deplist
       }
+    })
+    halfyearDepartmentColumns().then(res => {
+      this.columns = res.data.map(item => {
+        return item.potName
+      })
+      this.columns.unshift('姓名')
+      this.columns.unshift('部门')
+      this.columns.unshift('账号')
     })
   },
   methods: {
-    handleFilter() {
-      this.listLoading = true
-      getMyDepartmentPage(this.listQuery).then(res => {
-        this.list = res.data.content
-        this.total = this.list.length
-        this.listLoading = false
-      })
-    },
-    handleDownload() {
-      console.log(this.listQuery)
+    handleAllDownload() {
       if (this.listQuery.fillMonth === '') {
         this.$notify.error({
           title: '错误',
           message: '请先选择月份'
         })
       } else {
-        // this.downloadLoading = true
-        this.listQuery.department = this.vuexDepartment
-        getRecordNoPage(this.listQuery).then(res => {
+        axios.post('http://139.224.135.165:8080/risk/resshow/deplownd', this.listQuery, { responseType: 'blob' })
+          .then((res) => {
+            const { data, headers } = res
+            // const fileName = headers['content-disposition'].replace(/\w+;.+filename=(.*)/, '$1')
+            // 此处当返回json文件时需要先对data进行JSON.stringify处理，其他类型文件不用做处理
+            // const blob = new Blob([JSON.stringify(data)], ...)
+            const blob = new Blob([data], { type: headers['content-type'] })
+            const dom = document.createElement('a')
+            const url = window.URL.createObjectURL(blob)
+            dom.href = url
+            dom.download = decodeURI(`${this.listQuery.fillMonth}-${this.listQuery.department}-部门半年报附件汇总.zip`)
+            dom.style.display = 'none'
+            document.body.appendChild(dom)
+            dom.click()
+            dom.parentNode.removeChild(dom)
+            window.URL.revokeObjectURL(url)
+          })
+      }
+    },
+    handleFilter() {
+      this.listLoading = true
+      halfyearDepartmentResult(this.listQuery).then(res => {
+        res.data.content.forEach(content => {
+          content.record.forEach(item => {
+            item.department = content.department
+          })
+        })
+        this.list = res.data.content
+        this.total = this.list.length
+        this.listLoading = false
+      })
+    },
+    handleDownload() {
+      if (this.listQuery.fillMonth === '') {
+        this.$notify.error({
+          title: '错误',
+          message: '请先选择月份'
+        })
+      } else {
+        this.downloadLoading = true
+        halfyearDepartmentExcel(this.listQuery).then(res => {
           const result = res.data
           import('@/vendor/Export2Excel').then(excel => {
             const tHeader = this.columns
@@ -168,46 +198,24 @@ export default {
               'loginName',
               'department',
               'name',
-              'itemName1',
-              'itemName2',
-              'itemName3',
-              'itemName4',
-              'itemName5',
-              'itemName6',
-              'itemName7',
-              'itemName8',
-              'itemName9',
-              'itemName10',
+              'element1',
+              'element2',
+              'element3',
+              'element4',
+              'element5',
+              'element6',
+              'element7',
+              'element8',
+              'element9',
+              'element10',
               'itemName11',
-              'itemName12',
-              'itemName13',
-              'itemName14',
-              'itemName15',
-              'itemName16',
-              'itemName17',
-              'itemName18',
-              'itemName19',
-              'itemName20',
-              'itemName21',
-              'itemName22',
-              'itemName23',
-              'itemName24',
-              'itemName25',
-              'itemName26',
-              'itemName27',
-              'itemName28',
-              'itemName29',
-              'itemName30',
-              'itemName31',
-              'itemName32',
-              'itemName33'
+              'itemName12'
             ]
             const data = this.formatJson(filterVal, result)
-            // console.log(result, data, tHeader)
             excel.export_json_to_excel({
               header: tHeader,
               data,
-              filename: `${this.listQuery.fillMonth}-${this.listQuery.department}-${this.listQuery.loginName}-风险点填写记录`
+              filename: `${this.listQuery.fillMonth}-${this.listQuery.department}-部门半年报填写记录`
             })
             this.downloadLoading = false
           })
@@ -223,58 +231,6 @@ export default {
         }
       }))
     }
-    // handleFilter() {
-    //   this.listLoading = true
-    //   this.listQuery.department = this.vuexDepartment
-    //   getRecord(this.listQuery).then(res => {
-    //     this.list = res.data.content
-    //     this.total = this.list.length
-    //     this.listLoading = false
-    //   })
-    // }
-    // handleDownload() {
-    //   this.downloadLoading = true
-    //   getMyDepartment(this.listQuery).then(res => {
-    //     const tmp = res.data
-    //     const result = []
-    //     for (let j = 0; j < tmp.length; j++) {
-    //       for (let i = 0; i < tmp[j].record.length; i++) {
-    //         result.push({
-    //           loginName: tmp[j].loginName,
-    //           name: tmp[j].name,
-    //           department: tmp[j].department,
-    //           id: tmp[j].record[i].id,
-    //           columnName: tmp[j].record[i].columnName,
-    //           content: tmp[j].record[i].content,
-    //           fillMonth: tmp[j].record[i].fillMonth,
-    //           fillTime: tmp[j].record[i].fillTime
-    //         })
-    //       }
-    //     }
-    //     import('@/vendor/Export2Excel').then(excel => {
-    //       const tHeader = ['id', '账号', '姓名', '部门', '列名称', '填写内容', '填写时间']
-    //       const filterVal = ['id', 'loginName', 'name', 'department', 'columnName', 'content', 'fillTime']
-    //       const data = this.formatJson(filterVal, result)
-    //       console.log(data, result)
-    //       excel.export_json_to_excel({
-    //         header: tHeader,
-    //         data,
-    //         filename: `${this.listQuery.fillMonth ? this.listQuery.fillMonth : ''}-${this.listQuery.department ? this.listQuery.department : ''}-${this.listQuery.loginName ? this.listQuery.loginName : ''}-月报填写记录`
-    //       })
-    //       this.downloadLoading = false
-    //     })
-    //   })
-    // },
-    // formatJson(filterVal, data) {
-    //   return data.map(v => filterVal.map(j => {
-    //     if (j === 'fillTime') {
-    //       return parseTime2(v[j])
-    //     } else {
-    //       return v[j]
-    //     }
-    //   }))
-    // },
-
   }
 }
 </script>

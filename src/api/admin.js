@@ -17,7 +17,7 @@ export function userPage(data) {
 
 export function updateUser(data) {
   return request({
-    url: '/user/updateonedetail',
+    url: '/user/upone',
     method: 'post',
     data
   })
@@ -25,14 +25,14 @@ export function updateUser(data) {
 
 export function deleteUser(data) {
   return request({
-    url: '/user/deluser',
+    url: '/user/delone',
     method: 'post',
     data
   })
 }
 export function addUser(data) {
   return request({
-    url: '/user/adduser',
+    url: '/userrisk/addphone',
     method: 'post',
     data
   })
@@ -95,7 +95,7 @@ export function getMonthReport(data) {
 }
 export function secAdminGetUserPage(data) {
   return request({
-    url: '/user/depuserpage',
+    url: '/userrisk/getallrisknmaes',
     method: 'post',
     data
   })
@@ -252,6 +252,135 @@ export function halfyear(data) {
 export function departmentUploadHalfyear(data) {
   return request({
     url: '/examine/checkrecord',
+    method: 'post',
+    data
+  })
+}
+
+export function halfyearDepartmentResult(data) {
+  return request({
+    url: '/resshow/depallspotpage',
+    method: 'post',
+    data
+  })
+}
+
+export function halfyearDepartmentColumns() {
+  return request({
+    url: '/resshow/depspeck',
+    method: 'get'
+  })
+}
+export function halfyearDepartmentExcel(data) {
+  return request({
+    url: '/resshow/depallspotexcel',
+    method: 'post',
+    data
+  })
+}
+
+export function halfyearDistrictResult(data) {
+  return request({
+    url: '/resshow/disallspotpage',
+    method: 'post',
+    data
+  })
+}
+export function halfyearDistrictColumns() {
+  return request({
+    url: '/resshow/disspeck',
+    method: 'get'
+  })
+}
+export function halfyearDistrictExcel(data) {
+  return request({
+    url: '/resshow/disallspotexcel',
+    method: 'post',
+    data
+  })
+}
+export function departmentRisks(data) {
+  return request({
+    url: '/userrisk/getmanyrisk',
+    method: 'post',
+    data
+  })
+}
+
+export function getRiskColumns() {
+  return request({
+    url: '/examine/rescolumn',
+    method: 'get'
+  })
+}
+export function newRisk(data) {
+  return request({
+    url: '/examine/addrelation',
+    method: 'post',
+    data
+  })
+}
+
+export function getUserPassword(data) {
+  return request({
+    url: '/user/onepassword',
+    method: 'post',
+    data
+  })
+}
+
+export function getAllRisks(data) {
+  return request({
+    url: '/userrisk/deprisknames',
+    method: 'post',
+    data
+  })
+}
+export function secUpdateRisks(data) {
+  return request({
+    url: '/userrisk/updaterisknames',
+    method: 'post',
+    data
+  })
+}
+export function queryMyRiskRecord(data) {
+  return request({
+    url: '/examine/minerecord',
+    method: 'post',
+    data
+  })
+}
+export function deleteRiskAdmin(data) {
+  return request({
+    url: '/userrisk/delrelations',
+    method: 'post',
+    data
+  })
+}
+export function getRiskAdmin(data) {
+  return request({
+    url: '/userrisk/geonerisk',
+    method: 'post',
+    data
+  })
+}
+
+export function adminUpdateRisk(data) {
+  return request({
+    url: '/userrisk/updaterelations',
+    method: 'post',
+    data
+  })
+}
+export function newGetRiskColumns() {
+  return request({
+    url: '/resshow/eventnames',
+    method: 'get'
+  })
+}
+export function newAdminGetRiskData(data) {
+  return request({
+    url: '/resshow/allfillexcelpage',
     method: 'post',
     data
   })

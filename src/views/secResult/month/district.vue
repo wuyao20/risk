@@ -140,6 +140,7 @@ export default {
       this.columns.unshift('姓名')
       this.columns.unshift('部门')
       this.columns.unshift('账号')
+      console.log('++++++++', this.columns)
     })
   },
   computed: {
@@ -168,23 +169,6 @@ export default {
         })
       } else {
         this.downloadLoading = true
-        // queryDepartWrite(this.listQuery).then(res => {
-        //   const tmp = res.data
-        //   const result = []
-        //   for (let j = 0; j < tmp.length; j++) {
-        //     for (let i = 0; i < tmp[j].record.length; i++) {
-        //       result.push({
-        //         loginName: tmp[j].loginName,
-        //         name: tmp[j].name,
-        //         department: tmp[j].department,
-        //         id: tmp[j].record[i].id,
-        //         columnName: tmp[j].record[i].columnName,
-        //         content: tmp[j].record[i].content,
-        //         fillMonth: tmp[j].record[i].fillMonth,
-        //         fillTime: tmp[j].record[i].fillTime
-        //       })
-        //     }
-        //   }
         this.listQuery.department = this.vuexDepartment
         downloadNewDistrictMonth(this.listQuery).then(res => {
           const result = res.data
@@ -195,8 +179,8 @@ export default {
               'department',
               'name',
               'columnName1',
-              'columnName2',
-              'columnName3',
+              // 'columnName2',
+              // 'columnName3',
               'columnName4',
               'columnName5',
               'columnName6',
@@ -218,11 +202,13 @@ export default {
               'columnName22',
               'columnName23',
               'columnName24',
-              'columnName25',
+              // 'columnName25',
               'columnName26',
               'columnName27',
               'columnName28'
             ]
+            console.log('*******', filterVal)
+            console.log(result)
             const data = this.formatJson(filterVal, result)
             excel.export_json_to_excel({
               header: tHeader,

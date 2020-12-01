@@ -1,7 +1,21 @@
 <template>
   <div class="dashboard-container">
     <div class="dashboard-title">
-      <span>个人账号风险点汇总</span>
+      <span>个人风险点填写纪录</span>
+    </div>
+    <div class="filter-container">
+      <label>请选择月份：</label>
+      <el-date-picker
+        v-model="listQuery.fillMonth"
+        type="month"
+        placeholder="选择月份"
+        class="filter-item"
+        format="yyyy 年 MM 月"
+        value-format="yyyyMM"
+      />
+      <!-- <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+        搜索
+      </el-button> -->
     </div>
     <el-table
       v-loading="listLoading"
@@ -50,7 +64,7 @@
       </el-table-column>
       <el-table-column label="操作" align="center">
         <template slot-scope="{row}">
-          <el-button type="primary" @click="handleClick(row)">填写</el-button>
+          <el-button type="primary" @click="handleClick(row)">查询</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -58,20 +72,20 @@
 </template>
 
 <script>
-import { getRiskSummary } from '../../../api/admin'
+import { getRiskSummary } from '../../api/admin'
 import { mapGetters } from 'vuex'
 export default {
   name: 'Summary',
   data() {
     return {
       list: [],
-      listLoading: false
+      listLoading: false,
+      listQuery: {
+        fillMonth: ''
+      }
     }
   },
   computed: {
-    workId() {
-      return this.$route.params.workId
-    },
     ...mapGetters([
       'name'
     ])
@@ -79,14 +93,21 @@ export default {
   created() {
     getRiskSummary({ loginName: this.name }).then(res => {
       this.list = res.data
-      console.log(this.list)
     })
   },
   methods: {
     handleClick(row) {
+      if (this.listQuery.fillMonth === '') {
+        this.$notify.error({
+          title: '错误',
+          message: '请选择月份'
+        })
+        return
+      }
       console.log(row)
+      console.log(this.listQuery.fillMonth)
       this.$router.push({
-        path: `/department/statistics/${row.riskName}`
+        path: `/myrecord/result?riskName=${row.riskName}&fillMonth=${this.listQuery.fillMonth}`
       })
     }
   }

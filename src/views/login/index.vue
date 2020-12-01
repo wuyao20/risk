@@ -69,8 +69,8 @@ export default {
     }
     return {
       loginForm: {
-        username: this.$route.query.username ? this.$route.query.username : 'JJZ000',
-        password: this.$route.query.password ? this.$route.query.password : '123456'
+        username: this.$route.query.username ? this.$route.query.username : '',
+        password: this.$route.query.password ? this.$route.query.password : ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],

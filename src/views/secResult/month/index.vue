@@ -192,8 +192,8 @@ export default {
               'department',
               'name',
               'columnName1',
-              'columnName2',
-              'columnName3',
+              // 'columnName2',
+              // 'columnName3',
               'columnName4',
               'columnName5',
               'columnName6',
@@ -215,11 +215,12 @@ export default {
               'columnName22',
               'columnName23',
               'columnName24',
-              'columnName25',
+              // 'columnName25',
               'columnName26',
               'columnName27',
               'columnName28'
             ]
+            console.log(filterVal, result, this.columns)
             const data = this.formatJson(filterVal, result)
             excel.export_json_to_excel({
               header: tHeader,

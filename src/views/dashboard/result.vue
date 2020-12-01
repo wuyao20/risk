@@ -1,18 +1,5 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <el-date-picker
-        v-model="listQuery.fillMonth"
-        type="month"
-        placeholder="选择月份"
-        class="filter-item"
-        format="yyyy 年 MM 月"
-        value-format="yyyyMM"
-      />
-      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        搜索
-      </el-button>
-    </div>
     <el-table
       v-loading="listLoading"
       :data="list"
@@ -26,7 +13,7 @@
           <span>{{ $index+1 }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="账号" align="center">
+      <el-table-column label="风险点" align="center">
         <template slot-scope="{row}">
           <span>{{ row.loginName }}</span>
         </template>
@@ -56,7 +43,7 @@
 </template>
 
 <script>
-import { queryMyRecord } from '../../api/admin'
+import { queryMyRiskRecord } from '../../api/admin'
 export default {
   name: 'Index',
   data() {
@@ -68,21 +55,27 @@ export default {
       list: []
     }
   },
+  created() {
+    console.log(this.$route.query)
+    queryMyRiskRecord(this.$route.query).then(res => {
+      this.list = res.data[0].record
+    })
+  },
   methods: {
-    handleFilter() {
-      this.listLoading = true
-      if (this.listQuery.fillMonth !== '') {
-        queryMyRecord(this.listQuery).then(res => {
-          this.list = res.data[0].record
-          this.listLoading = false
-        })
-      } else {
-        this.$notify.error({
-          title: '错误',
-          message: '请先选择月份'
-        })
-      }
-    }
+    // handleFilter() {
+    //   this.listLoading = true
+    //   if (this.listQuery.fillMonth !== '') {
+    //     queryMyRecord(this.listQuery).then(res => {
+    //       this.list = res.data[0].record
+    //       this.listLoading = false
+    //     })
+    //   } else {
+    //     this.$notify.error({
+    //       title: '错误',
+    //       message: '请先选择月份'
+    //     })
+    //   }
+    // }
   }
 }
 </script>

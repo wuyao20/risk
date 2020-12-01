@@ -9,9 +9,9 @@
       <div class="filter-item" style="margin-left: 5px;margin-right: 5px;">
         <el-radio-group v-model="listQuery.enableFlage2" size="medium">
           <el-radio-button :label="department" border>部门三级管理员</el-radio-button>
-          <el-radio-button :label="district" border>区县三级管理员</el-radio-button>
-          <el-radio-button :label="admin" border>系统管理员</el-radio-button>
-          <el-radio-button :label="secondaryAdmin" border>二级管理员</el-radio-button>
+          <el-radio-button :label="secDistrict" border>区县二级管理员</el-radio-button>
+          <!-- <el-radio-button :label="admin" border>系统管理员</el-radio-button> -->
+          <el-radio-button :label="secDepartment" border>部门二级管理员</el-radio-button>
         </el-radio-group>
       </div>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
@@ -99,11 +99,10 @@
           <el-input v-model="temp.company" />
         </el-form-item>
         <el-form-item label="归属部门/区县" prop="enableFlage2">
-          <el-radio-group v-model="temp.enableFlage2" size="medium">
+          <el-radio-group v-model="listQuery.enableFlage2" size="medium">
             <el-radio-button :label="department" border>部门三级管理员</el-radio-button>
-            <el-radio-button :label="district" border>区县三级管理员</el-radio-button>
-            <el-radio-button :label="admin" border>系统管理员</el-radio-button>
-            <el-radio-button :label="secondaryAdmin" border>二级管理员</el-radio-button>
+            <el-radio-button :label="secDistrict" border>区县二级管理员</el-radio-button>
+            <el-radio-button :label="secDepartment" border>部门二级管理员</el-radio-button>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -137,11 +136,10 @@
           <el-input v-model="temp.company" />
         </el-form-item>
         <el-form-item label="归属部门/区县" prop="enableFlage2">
-          <el-radio-group v-model="temp.enableFlage2" size="medium">
+          <el-radio-group v-model="listQuery.enableFlage2" size="medium">
             <el-radio-button :label="department" border>部门三级管理员</el-radio-button>
-            <el-radio-button :label="district" border>区县三级管理员</el-radio-button>
-            <el-radio-button :label="admin" border>系统管理员</el-radio-button>
-            <el-radio-button :label="secondaryAdmin" border>二级管理员</el-radio-button>
+            <el-radio-button :label="secDistrict" border>区县二级管理员</el-radio-button>
+            <el-radio-button :label="secDepartment" border>部门二级管理员</el-radio-button>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -168,10 +166,10 @@ export default {
   },
   data() {
     return {
-      department: 1,
-      district: 2,
+      department: 6,
+      secDistrict: 5,
       admin: 3,
-      secondaryAdmin: 4,
+      secDepartment: 4,
       tableKey: 0,
       listLoading: false,
       list: [],
@@ -181,7 +179,7 @@ export default {
         loginName: '',
         name: '',
         department: '',
-        enableFlage2: 1
+        enableFlage2: 6
       },
       total: 0,
       departments: [],
@@ -210,7 +208,7 @@ export default {
   methods: {
     calcRoles(role) {
       switch (role) {
-        case 1:
+        case 6:
           return '部门三级管理员'
         case 2:
           return '区县三级管理员'

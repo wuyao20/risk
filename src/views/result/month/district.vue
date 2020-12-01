@@ -98,7 +98,7 @@
 </template>
 
 <script>
-import { queryDistrictWritePage, queryDistrictWrite, getDepartColumnName, downloadNewDistrictMonth } from '../../../api/admin'
+import { queryDistrictWritePage, getDepartColumnName, downloadNewDistrictMonth } from '../../../api/admin'
 import Pagination from '@/components/Pagination'
 import { parseTime2 } from '../../../utils'
 export default {

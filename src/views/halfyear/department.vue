@@ -12,6 +12,7 @@
       <div v-for="(item, index) in list" :key="index" class="form-item">
         <el-form-item class="label-title" :label="labelCpu(item.spotName, index+1)">
           <el-input
+            v-if="index !== list.length-1"
             v-model="item.content"
             type="textarea"
             :rows="2"
@@ -19,6 +20,22 @@
             :placeholder="item.originalContent"
             size="large"
           />
+          <el-upload
+            v-if="index === list.length-1"
+            class="upload-demo"
+            action="http://139.224.135.165:8080/risk/examine/updocument"
+            :before-remove="beforeRemove"
+            :on-remove="handleRemove"
+            :on-error="handleError"
+            multiple
+            :limit="1"
+            :on-exceed="handleExceed"
+            :on-success="handleSuccess"
+            :file-list="fileList"
+          >
+            <el-button size="small" type="primary">点击上传</el-button>
+            <div slot="tip" class="el-upload__tip">只允许上传一个文件，若有多个文件，请打包成压缩包进行上传。</div>
+          </el-upload>
         </el-form-item>
       </div>
     </el-form>
@@ -39,7 +56,8 @@ export default {
   name: 'Department',
   data() {
     return {
-      list: []
+      list: [],
+      fileList: []
     }
   },
   computed: {
@@ -81,6 +99,9 @@ export default {
           content: item.content
         }
       })
+      if (this.fileList[0]) {
+        temArr[temArr.length - 1].content = this.fileList[0].url
+      }
       const uploadData = {
         loginName: this.name,
         gridCode: this.roles[0],
@@ -100,7 +121,7 @@ export default {
             title: '成功',
             message: '填写成功'
           })
-          // this.$router.go(-1)
+          this.$router.go(-1)
         } else {
           this.$notify.error({
             title: '失败',
@@ -120,6 +141,28 @@ export default {
         background: 'rgba(0, 0, 0, 0.7)'
       })
       return loading
+    },
+    handleError() {
+      this.$notify.error({
+        title: '失败',
+        message: '上传文件失败，请重试。'
+      })
+    },
+    handleSuccess(res, file) {
+      this.fileList.push(res.data)
+    },
+    handleExceed(files, fileList) {
+      this.$message.error(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
+    },
+    beforeRemove(file, fileList) {
+      return this.$confirm(`确定移除 ${file.name}？`)
+    },
+    handleRemove(file, fileList) {
+      console.log(fileList)
+      const index = this.fileList.findIndex(item => {
+        return item.uid === file.uid
+      })
+      this.fileList.splice(index, 1)
     }
   }
 }

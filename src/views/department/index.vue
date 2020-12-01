@@ -47,16 +47,16 @@
                 编辑
               </el-button>
             </div>
-            <div>
+            <!-- <div>
               <el-button size="mini" type="success" @click="handleModifyStatus(row)">
                 上传
               </el-button>
-            </div>
+            </div> -->
           </div>
         </template>
       </el-table-column>
     </el-table>
-    <router-view />
+    <!-- <router-view /> -->
   </div>
 </template>
 
@@ -133,10 +133,10 @@ export default {
         margin-bottom 8px
         font-weight bold
       .table
-        .button-container
-          margin 5px auto
-          display grid
-          grid-template-columns 100%
-          grid-template-rows 1fr 1fr
-          grid-row-gap 10px
+        // .button-container
+        //   margin 5px auto
+        //   display grid
+        //   grid-template-columns 100%
+        //   grid-template-rows 1fr 1fr
+        //   grid-row-gap 10px
 </style>
